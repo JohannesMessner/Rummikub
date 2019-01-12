@@ -5,21 +5,19 @@ import java.util.Map;
 
 public interface Game {
 
-  void setPlayer(int age);
+  void moveStoneOnTable(Coordinate currentCoord, Coordinate nextCoord);
 
-  void start();
+  void moveStoneFromHand(Coordinate currentCoord, Coordinate nextCoord);
 
-  void moveStoneOnTable(Coordinate initialPosition, Coordinate targetPosition);
-
-  void moveStoneFromHand(Coordinate initialPosition, Coordinate targetPosition);
-
-  void moveStoneOnHand(int playerPosition, Coordinate initialPosition, Coordinate targetPosition);
+  void moveStoneOnHand(Coordinate currentCoord, Coordinate nextCoord);
 
   void drawStone();
 
-  void playerHasLeft(int playerPosition);
+  void playerHasLeft();
 
   void undo();
+
+  void nextTurn();
 
   boolean hasWinner();
 
@@ -27,13 +25,13 @@ public interface Game {
 
   Map<Coordinate, Stone> getTableStones();
 
-  Map<Coordinate, Stone> getCurrentPlayerStones();
+  Map<Coordinate, Stone> getCurrentHandStones();
 
-  List<Integer> getPlayerHandSizes();
+  List<Integer> getOtherHandSizes();
 
   int getBagSize();
 
-  int getCurrentPlayerPosition();
+  int getCurrentHandNumber();
 
 
 
