@@ -13,7 +13,6 @@ public class Stone {
     this.number = number;
   }
 
-
   public Stone() {
     color = Color.JOKER;
   }
