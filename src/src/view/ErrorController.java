@@ -1,17 +1,21 @@
 package view;
 
 import javafx.fxml.FXML;
-
-import javax.xml.soap.Text;
+import javafx.scene.text.Text;
 
 public class ErrorController {
 
     @FXML
     Text errorMessage;
+    private String message;
 
     @FXML
-    public void initialize(String errorMassage) {
-        this.errorMessage.setValue(errorMassage);
+    public void initialize() {
+        this.errorMessage.setText(message);
+    }
+
+    public void initData(String message) {
+        this.message = message;
     }
 
     @FXML
