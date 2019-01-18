@@ -38,6 +38,10 @@ public class RummiTable implements Grid {
     stones.clear();
   }
 
+  public int size() {
+    return stones.size();
+  }
+
   public boolean isConsistent() {
     // check the minimal Condition (:= a valid set has at least 3 stones)
     if (stones.size() < MIN_SET_SIZE) {

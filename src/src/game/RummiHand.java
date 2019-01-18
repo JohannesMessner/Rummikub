@@ -9,7 +9,7 @@ public class RummiHand implements Grid {
 
 
   public RummiHand(){
-    grid = new HashMap<>();
+    grid = new HashMap<>(WIDTH * HEIGHT);
   }
 
   @Override
