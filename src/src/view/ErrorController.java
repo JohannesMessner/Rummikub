@@ -7,11 +7,11 @@ import javax.xml.soap.Text;
 public class ErrorController {
 
     @FXML
-    Text errorMassage;
+    Text errorMessage;
 
     @FXML
     public void initialize(String errorMassage) {
-        this.errorMassage.setValue(errorMassage);
+        this.errorMessage.setValue(errorMassage);
     }
 
     @FXML
