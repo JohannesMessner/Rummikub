@@ -21,6 +21,9 @@ final class ClientModel {
   private List<String> playersNames;
   private int BagSize;
 
+  ClientModel() {
+  }
+
   ClientModel(boolean isHost) {
     this.isHost = isHost;
   }
