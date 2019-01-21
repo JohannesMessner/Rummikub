@@ -10,15 +10,20 @@ import javafx.beans.value.ObservableValue;
 
 final class ClientModel {
 
+  private String serverIP;
+  private boolean isHost;
+  private boolean isGameStarted;
+  private boolean isMyTurn;
+  private int currentPlayerID;
   private StoneInfo[][] table;
   private StoneInfo[][] hand;
   private List<Integer> handSizes;
   private List<String> playersNames;
   private int BagSize;
-  private int currentPlayerID;
-  private boolean isMyTurn;
-  private boolean isGameStarted;
-  private boolean isHost;
+
+  ClientModel(boolean isHost) {
+    this.isHost = isHost;
+  }
 
   public void setHand(StoneInfo[][] newHand) {
     this.hand = newHand;
@@ -73,7 +78,7 @@ final class ClientModel {
   }
 
   void notifyTurn() {
-    this.isMyTurn = true;
+    isMyTurn = true;
   }
 
   void finishTurn() {
@@ -81,14 +86,22 @@ final class ClientModel {
   }
 
   void notifyGameStart() {
-    this.isGameStarted = true;
+    isGameStarted = true;
+  }
+
+  void notifyHost() {
+    isHost = true;
   }
 
   boolean isHost() {
     return isHost;
   }
 
-  void notifyHost() {
-    isHost = true;
+  void setServerIP(String serverIP) {
+    this.serverIP = serverIP;
+  }
+
+  String getServerIP() {
+    return serverIP;
   }
 }

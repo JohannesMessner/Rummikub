@@ -14,6 +14,7 @@
 <BorderPane fx:id="root"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@/view/gameStyle.css"
             fx:controller="view.RummiController">
     <top>
         <StackPane fx:id="top">

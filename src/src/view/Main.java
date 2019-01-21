@@ -1,17 +1,36 @@
 package view;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import view.GameController;
+//MUSIC
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
 
 import java.awt.*;
+import java.net.URISyntaxException;
 
 
 public class Main extends Application {
   private StartController startController;
+
+  //private Media sound = new Media(new File("C:\\Users\\Angelos Kafounis\\Desktop\\rummikub---currygang\\src\\src\\view\\startMusic.mp3").toURI().toString());
+  private Media sound;
+  {
+    try {
+     sound = new Media((getClass().getResource("startMusic.mp3")).toURI().toString());
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+    }
+  }
+  private MediaPlayer mediaPlayer = new MediaPlayer(sound);
+
   //WaitController waitController;
 //  GameController gameController; //TODO: Hide
 //
@@ -22,9 +41,24 @@ public class Main extends Application {
   //TODO: Catch exception
   @Override
   public void start(Stage primaryStage) throws Exception {
-    // FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml")); //TODO: Change
+    /*
+    TODO: Start -> (event) -> Wait -> (event) -> Game
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("WaitView.fxml"));
+    Parent root = loader.load();
+    gameController = loader.getController();
+    */
+
+//    FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
     FXMLLoader loader = new FXMLLoader(getClass().getResource("Start.fxml"));
     Parent root = loader.load();
+//    gameController = loader.getController();
+    startController = loader.getController();
+    startController.setMain(this);
+
+
+    // A Little Music
+    mediaPlayer.play();
+
     RummiController controller = loader.getController();
     controller.setState(primaryStage);
     //gameController = loader.getController();
@@ -36,6 +70,16 @@ public class Main extends Application {
     primaryStage.setScene(scene);
     //primaryStage.setFullScreen(true);
     primaryStage.show();
+
+    primaryStage.setOnCloseRequest(e -> {
+      System.out.println("klicked  on x");
+      startController.killThreads();
+      Platform.exit();
+    });
+  }
+
+  void stopMusic() {
+    this.mediaPlayer.stop();
   }
 
   /**

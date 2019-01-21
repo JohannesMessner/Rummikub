@@ -20,6 +20,7 @@ public class WaitController implements Initializable {
 
   private RequestBuilder requestBuilder;
   private NetworkController networkController;
+
   private ClientModel model;
 
   @FXML
@@ -48,13 +49,6 @@ public class WaitController implements Initializable {
     requestBuilder.sendStartRequest();
   }
 
-  public void setModel(ClientModel model) {
-    if (model.isHost()) {
-      waitingState.setText("hosting game");
-    }
-    this.model = model;
-  }
-
   void setNetworkController(NetworkController networkController) {
     this.networkController = networkController;
   }
@@ -63,60 +57,70 @@ public class WaitController implements Initializable {
     this.requestBuilder = requestBuilder;
   }
 
-  void setIpAddress(String ipAddress) {
-    this.ipAddress.setText(ipAddress);
+  void returnToStartView() {
+    networkController.returnToStartView();
   }
 
-  void switchToGameView() {
-    Stage stage = (Stage) startGameButton.getScene().getWindow();
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
-    Parent root = loader.getRoot();
-    try {
-      root = loader.load();
-    } catch (IOException e) {
-      e.printStackTrace();
+ void setPlayerNames(List<String> names) {
+   int size = names.size();
+   switch (size) {
+     case 4:
+       player3.setText(names.get(3));
+     case 3:
+       player2.setText(names.get(2));
+     case 2:
+       player1.setText(names.get(1));
+     case 1:
+       player0.setText(names.get(0));
+     default:
+   }
+   if (model.isHost()) {
+      if (size > 1) {
+        // start button visible
+        startGameButton.setVisible(true);
+        return;
+      }
+   }
+   // start button not visible
+   startGameButton.setVisible(false);
+ }
+
+ synchronized void switchToGameView() {
+    synchronized (networkController) {
+      Stage stage = (Stage) startGameButton.getScene().getWindow();
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("Game.fxml"));
+      Parent root = loader.getRoot();
+      try {
+        root = loader.load();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      GameController gameController = loader.getController();
+      gameController.setModel(model);
+
+      gameController.setRequestBuilder(requestBuilder);
+      gameController.setNetworkController(networkController);
+      networkController.setGameController(gameController);
+
+      Scene gameScene = new Scene(root, 1024, 768);
+      gameScene.getStylesheets().add("view/gameStyle.css");
+      stage.setScene(gameScene);
+      notifyAll();
+      //System.out.println("switched to game");
     }
-
-    GameController gameController = loader.getController();
-    gameController.setModel(model);
-
-    gameController.setRequestBuilder(requestBuilder);
-    networkController.setGameController(gameController);
-
-    Scene gameScene = new Scene(root, 1024, 768);
-    gameScene.getStylesheets().add("view/gameStyle.css");
-    stage.setScene(gameScene);
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-//    startGameButton.visibleProperty().bind(model.hostProperty());
     //ipAddress.setText();
   }
 
-  void setPlayerNames(List<String> names) {
-    model.setPlayerNames(names);
-    int numberOfPlayers = names.size();
-    if (numberOfPlayers > 1 && model.isHost()) {
-      startGameButton.setVisible(true);
-    } else {
-      startGameButton.setVisible(false);
+  void setModel(ClientModel model) {
+    this.model = model;
+    if (model.isHost()) {
+      waitingState.setText("hosting Game");
     }
-    for (int i = 0; i < numberOfPlayers; i++) {
-      switch (i) {
-        case 0:
-          player0.setText(names.get(0));
-          break;
-        case 1:
-          player1.setText(names.get(1));
-          break;
-        case 2:
-          player2.setText(names.get(2));
-          break;
-        case 3:
-        default:
-          player3.setText(names.get(3));
-      }
-    }
+    ipAddress.setText(model.getServerIP());
   }
 }
