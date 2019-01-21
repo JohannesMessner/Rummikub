@@ -18,12 +18,7 @@ final class ClientModel {
   private int currentPlayerID;
   private boolean isMyTurn;
   private boolean isGameStarted;
-  private final boolean isHost;
-  private BooleanProperty host = new SimpleBooleanProperty();
-
-  ClientModel(boolean isHost) {
-    this.isHost = isHost;
-  }
+  private boolean isHost;
 
   public void setHand(StoneInfo[][] newHand) {
     this.hand = newHand;
@@ -93,7 +88,7 @@ final class ClientModel {
     return isHost;
   }
 
-  BooleanProperty hostProperty() {
-    return host;
+  void notifyHost() {
+    isHost = true;
   }
 }

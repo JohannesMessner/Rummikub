@@ -1,18 +1,19 @@
 package network.client;
 
 import communication.gameinfo.*;
-import view.NetworkController;
+import view.RummiController;
 
 public class GameInfoHandler { //TODO FIGURE OUT A WAY TO BE NOT PUBLIC: PROBLEM: CLIENT-NETWORKCONTROLLER-GAMEINFOHANDLER
 
-  private NetworkController controller;
+  private RummiController controller;
 
-  public GameInfoHandler(NetworkController controller) {
+  public GameInfoHandler(RummiController controller) {
     this.controller = controller;
 //    this.client = client;
   }
 
   void applyGameInfo(Object gameInfo) {
+    System.out.println("GameInfoHandler: applying---" + gameInfo);
     switch (((GameInfo)gameInfo).getGameInfoID()) {
       // case CURRENT_PLAYER:
       case HAND:

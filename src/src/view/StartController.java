@@ -55,12 +55,12 @@ public class StartController {
   void hostGame() throws UnknownHostException {
     new RummiServer().start();
     ipField.setText(Inet4Address.getLocalHost().getHostAddress());
-    switchToWait(new ClientModel(true));
+//    switchToWait(new ClientModel(true));
   }
 
   @FXML
   void joinGame() throws IOException {
-    switchToWait(new ClientModel(false));
+//    switchToWait(new ClientModel(false));
   }
 
 

@@ -14,7 +14,7 @@
 <BorderPane fx:id="root"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="view.GameController">
+            fx:controller="view.RummiController">
     <top>
         <StackPane fx:id="top">
             <children>
@@ -81,7 +81,7 @@
                     <!-- drawStone buttons etc. -->
                     <children>
                         <Button fx:id="drawButton" text="Draw stone"
-                                onMouseClicked="#drawStone"/>
+                                onMouseClicked="#sendDrawRequest"/>
                         <Button fx:id="undoButton" text="Undo"/>
                     </children>
                 </HBox>

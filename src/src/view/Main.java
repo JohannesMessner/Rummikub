@@ -13,8 +13,8 @@ import java.awt.*;
 public class Main extends Application {
   private StartController startController;
   //WaitController waitController;
-  GameController gameController; //TODO: Hide
-
+//  GameController gameController; //TODO: Hide
+//
   public static void main(String[] args) {
     launch(args);
   }
@@ -25,9 +25,10 @@ public class Main extends Application {
     // FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml")); //TODO: Change
     FXMLLoader loader = new FXMLLoader(getClass().getResource("Start.fxml"));
     Parent root = loader.load();
+    RummiController controller = loader.getController();
+    controller.setState(primaryStage);
     //gameController = loader.getController();
-    startController = loader.getController();
-
+//    startController = loader.getController();
     primaryStage.setTitle("Rummikub");
     //Scene scene = resolution(root);
     Scene scene = new Scene(root, 1024, 768);

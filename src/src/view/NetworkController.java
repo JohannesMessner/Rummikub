@@ -27,7 +27,7 @@ public class NetworkController implements Controller {
   NetworkController(RummiClient client) {
     this.client = client;
     client.start();
-    client.setGameInfoHandler(new GameInfoHandler(this));
+//    client.setGameInfoHandler(new GameInfoHandler(this));
   }
 
   void setWaitController(WaitController waitController) {

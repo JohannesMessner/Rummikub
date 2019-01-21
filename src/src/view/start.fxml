@@ -13,7 +13,7 @@
 <StackPane styleClass="root"
            xmlns="http://javafx.com/javafx/8.0.172-ea"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="view.StartController"
+           fx:controller="view.RummiController"
            stylesheets="@/view/startStyle.css">
    <children>
       <VBox>
