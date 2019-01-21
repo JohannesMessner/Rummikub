@@ -64,7 +64,7 @@ public class StartController {
 
     @FXML
     public void initialize() {
-        errorPane.setVisible(false);
+  //      errorPane.setVisible(false);
     }
 
 //    private String ip;

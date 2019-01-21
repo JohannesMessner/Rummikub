@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="view.RummiController">
+        <StackPane alignment="CENTER">
+            <!-- opponentMid's hand -->
+            <children>
+                <fx:include fx:id="startView"
+                            source="start.fxml"/>
+            </children>
+        </StackPane>
+        <StackPane>
+            <children>
+                <fx:include fx:id="waitView"
+                            source="wait.fxml"/>
+            </children>
+        </StackPane>
+        <StackPane>
+            <children>
+                <fx:include fx:id="gameView"
+                            source="game.fxml"/>
+            </children>
+        </StackPane>
+
+</StackPane>

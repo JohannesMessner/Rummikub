@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 
 
 public class Main extends Application {
-  private StartController startController;
+  private RummiController controller;
 
   //private Media sound = new Media(new File("C:\\Users\\Angelos Kafounis\\Desktop\\rummikub---currygang\\src\\src\\view\\startMusic.mp3").toURI().toString());
   private Media sound;
@@ -49,15 +49,15 @@ public class Main extends Application {
     */
 
 //    FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("Start.fxml"));
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("MainView.fxml"));
     Parent root = loader.load();
 //    gameController = loader.getController();
-    startController = loader.getController();
-    startController.setMain(this);
+    controller = loader.getController();
+    controller.setMain(this);
 
 
     // A Little Music
-    mediaPlayer.play();
+   // mediaPlayer.play();
 
     primaryStage.setTitle("Rummikub");
     //Scene scene = resolution(root);
@@ -69,7 +69,7 @@ public class Main extends Application {
 
     primaryStage.setOnCloseRequest(e -> {
       System.out.println("klicked  on x");
-      startController.killThreads();
+      controller.killThreads();
       Platform.exit();
     });
   }
