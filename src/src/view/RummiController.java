@@ -36,6 +36,7 @@ public class RummiController implements Controller {
 
   private Stage stage;
 
+  private RummiServer server;
   private RummiClient client;
   private ClientModel model = new ClientModel();
   private RequestBuilder requestBuilder;
@@ -66,7 +67,8 @@ public class RummiController implements Controller {
 //  }
 
   @FXML private void hostGame() {
-    new RummiServer().start();
+    server = new RummiServer();
+    server.start();
     try {
       ipField.setText(Inet4Address.getLocalHost().getHostAddress());
     } catch (UnknownHostException e) {
@@ -120,8 +122,10 @@ public class RummiController implements Controller {
 
   @Override public void notifyGameStart() {
     // change to game scene
+    System.out.println("requestBuilder: " + requestBuilder);
     try {
       switchScene(new FXMLLoader(getClass().getResource("game.fxml")));
+      System.out.println("requestBuilder: " + requestBuilder);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -157,6 +161,15 @@ public class RummiController implements Controller {
 
   @FXML public void handleOkButton() {
     client.sendRequest(new SimpleRequest(RequestID.CONFIRM_MOVE));
+  }
+
+  void killThreads() {
+    if (client != null) {
+      client.disconnect();
+    }
+    if (server != null) {
+      server.suicide();
+    }
   }
 }
 

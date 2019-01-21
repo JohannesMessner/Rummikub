@@ -21,6 +21,6 @@
       <Text fx:id="player1" layoutX="73.0" layoutY="264.0" strokeType="OUTSIDE" strokeWidth="0.0" text="user1 not connected" wrappingWidth="160.2060546875" />
       <Text fx:id="player2" layoutX="73.0" layoutY="292.0" strokeType="OUTSIDE" strokeWidth="0.0" text="user2 not connected" wrappingWidth="160.2060546875" />
       <Text fx:id="player3" layoutX="73.0" layoutY="320.0" strokeType="OUTSIDE" strokeWidth="0.0" text="user3 not connected" wrappingWidth="160.2060546875" />
-      <Button fx:id="startGameButton" layoutX="506.0" layoutY="343.0" mnemonicParsing="false" text="StartGame" onMouseClicked="#startGame"/>
+      <Button fx:id="startGameButton" layoutX="506.0" layoutY="343.0" mnemonicParsing="false" text="StartGame" onMouseClicked="#sendStartRequest"/>
    </children>
 </AnchorPane>
