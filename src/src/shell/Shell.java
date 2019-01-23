@@ -1,147 +1,148 @@
 package shell;
 
-import game.Coordinate;
-import game.Game;
-import game.RummiGame;
-import game.Stone;
+import network.client.ShellController;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
+import view.DemoView;
 
 public final class Shell {
   private Shell() {}
 
+  private static final String HELP_TEXT_FOR_SHELL = "Welcome to Rummikub_DEMO Version, powered by CurryGang, \n" +
+      "Here is a TEST *NON-GUI* Version of our program. \n" +
+      "PLEASE note that error messages are not reliable. Here is how you play our Demo:\n\n" +
+      "1. host a game by: host <name> <age>\n" +
+      "2. open another shell or with another computer join the game by: join <name> <age> <serverIP>" +
+      "3. host starts the game by: start\n" +
+      "4. print table and hand by: print\n" +
+      "rest you can see the followings...\n\n" +
+      "Commands: \n" +
+      "   HOST <username::String> <age::Integer> <number_of_clients_in_game::int>: With this command you host a game \n" +
+      "   and wait for you opponent to connect so you can start the game. \n" +
+      "   JOIN <username::String> <age::Integer> <IP_Address_from_Server::String>: You join a Server with already an opponent \n" +
+      "   START: Send a request_to_start_game to the Server and the Server starts the Game \n" +
+      "   PRINT: Prints the Table of the Game and your hand (with colors) \n" +
+      "   MOVE_ON_TABLE <Initial_column::Integer> <Initial_row::Integer> <Target_column::Integer> <Target_row::Integer>  \n" +
+      "   PUT_STONE <Initial_column_in_hand::Integer> <Initial_row_in_hand::Integer> <Target_column_in_table::Integer> <Target_row_in_table::Integer> \n" +
+      "   CHECK: Checks the consistent of the stones that you just puted on the table. \n" +
+      "   HELP: Prints a message that helps you understand how the Shell of the program works. \n" +
+      "   QUIT: Terminates the program.";
+
   enum Command {
-    NEW {
+    HOST {
       @Override
-      Game excecute(Game game, String[] tokens) {
-        game = new RummiGame();
-        return game;
+      ShellController execute(ShellController shellController, String[] tokens) {
+        shellController.host(tokens[1], Integer.parseUnsignedInt(tokens[2]));
+        return shellController;
       }
     },
-    PLAYER {
-      @Override Game excecute(Game game, String[] tokens) {
-        game.setPlayer(Integer.parseUnsignedInt(tokens[1]));
-        return game;
+    JOIN {
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        shellController.join(tokens[1], Integer.parseUnsignedInt(tokens[2]), tokens[3]);
+        return shellController;
       }
     },
     START {
-      @Override Game excecute(Game game, String[] tokens) {
-        game.start();
-        return game;
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        shellController.startGame();
+        return shellController;
       }
+
     },
     PRINT {
-      @Override Game excecute(Game game, String[] tokens) {
-        print(game);
-        return game;
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        shellController.printGame();
+        return shellController;
       }
     },
     CHECK {
-      @Override Game excecute(Game game, String[] tokens) {
-        System.out.println(game.isConsistent());
-        return game;
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        shellController.sendCheck();
+        return shellController;
       }
     },
     DRAW {
-      @Override Game excecute(Game game, String[] tokens) {
-        game.drawStone();
-        return game;
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        shellController.draw();
+        return shellController;
       }
     },
     MOVE_ON_TABLE {
-      @Override Game excecute(Game game, String[] tokens) {
-        int x1 = Integer.parseUnsignedInt(tokens[1]);
-        int y1 = Integer.parseUnsignedInt(tokens[2]);
-        int x2 = Integer.parseUnsignedInt(tokens[3]);
-        int y2 = Integer.parseUnsignedInt(tokens[4]);
-        game.moveStoneOnTable(new Coordinate(x1, y1), new Coordinate(x2, y2));
-        return game;
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        int initCol = Integer.parseUnsignedInt(tokens[1]);
+        int initRow = Integer.parseUnsignedInt(tokens[2]);
+        int targetCol = Integer.parseUnsignedInt(tokens[3]);
+        int targetRow = Integer.parseUnsignedInt(tokens[4]);
+        shellController.moveStoneOnTable(initCol, initRow, targetCol, targetRow);
+        return shellController;
       }
     },
-    MOVE_FROM_HAND {
-      @Override Game excecute(Game game, String[] tokens) {
-        int x1 = Integer.parseUnsignedInt(tokens[1]);
-        int y1 = Integer.parseUnsignedInt(tokens[2]);
-        int x2 = Integer.parseUnsignedInt(tokens[3]);
-        int y2 = Integer.parseUnsignedInt(tokens[4]);
-        game.moveStoneFromHand(new Coordinate(x1, y1), new Coordinate(x2, y2));
-        return game;
+    PUT_STONE {
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        int initCol = Integer.parseUnsignedInt(tokens[1]);
+        int initRow = Integer.parseUnsignedInt(tokens[2]);
+        int targetCol = Integer.parseUnsignedInt(tokens[3]);
+        int targetRow = Integer.parseUnsignedInt(tokens[4]);
+        shellController.moveStoneFromHand(initCol, initRow, targetCol, targetRow);
+        return shellController;
       }
     },
     MOVE_ON_HAND {
       @Override
-      Game excecute(Game game, String[] tokens) {
-        int x1 = Integer.parseUnsignedInt(tokens[1]);
-        int y1 = Integer.parseUnsignedInt(tokens[2]);
-        int x2 = Integer.parseUnsignedInt(tokens[3]);
-        int y2 = Integer.parseUnsignedInt(tokens[4]);
-        game.moveStoneOnHand(game.getCurrentPlayerPosition(), new Coordinate(x1, y1), new Coordinate(x2, y2));
-        return game;
+      ShellController execute(ShellController shellController, String[] tokens) {
+        int initCol = Integer.parseUnsignedInt(tokens[1]);
+        int initRow = Integer.parseUnsignedInt(tokens[2]);
+        int targetCol = Integer.parseUnsignedInt(tokens[3]);
+        int targetRow = Integer.parseUnsignedInt(tokens[4]);
+        shellController.moveStoneOnHand(initCol, initRow, targetCol, targetRow);
+        return shellController;
 
       }
     },
-    PLAYER_LEFT {
-      @Override
-      Game excecute(Game game, String[] tokens) {
-        return null;
-      }
-    },
     UNDO {
-      @Override Game excecute(Game game, String[] tokens) {
-        game.undo();
-        return game;
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        return shellController;
       }
     },
     HELP {
       @Override
-      Game excecute(Game game, String[] tokens) {
-        System.out.println(HELP);
-        return game;
-      }
-    },
-    QUIT {
-      @Override
-      Game excecute(Game game, String[] tokens) {
-        return null;
+      ShellController execute(ShellController shellController, String[] tokens) {
+        System.out.println(HELP_TEXT_FOR_SHELL);
+        return shellController;
       }
     },
     NO_COMMAND {
-      @Override Game excecute(Game game, String[] tokens) {
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
         error("no command");
-        return game;
+        return shellController;
       }
     },
+    RESET {
+      @Override
+      ShellController execute(ShellController shellController, String[] tokens) {
+        shellController.reset();
+        return shellController;
+      }
+    },
+    QUIT,
     NOT_VALID;
 
-    Game excecute(Game game, String[] tokens) {
-      return game;
+    ShellController execute(ShellController shellController, String[] tokens) {
+      return shellController;
     }
   }
-
-  private static final String ANSI_RESET = "\u001B[0m";
-  private static final String BLACK = "\u001B[47m";
-  private static final String WHITE = "\u001B[37;40m";
-  private static final String RED = "\u001B[41m";
-  private static final String BLUE = "\u001B[31;44m";
-  private static final String YELLOW = "\u001B[34;43m";
-  private static final String JOKER = "\u001B[45m";
-
-  private static final String HELP = "Commands: \n"
-      + "  new:\n"
-      + "    make a new table\n"
-      + "  print:\n"
-      + "    print the table\n"
-      + "  stone <col> <row> <color> <number>:\n"
-      + "    set a stone with <color> and <number> at (<col>, <row>)\n"
-      + "  check:\n"
-      + "    check the consistency of the table and return the result\n"
-      + "  help:\n"
-      + "    print help text";
-
-  private static final String MISSING_OR_TOO_MUCH_TOKENS_FOR = "missing or too much tokens";
   
   private static final String PROMPT = "rummikub> ";
 
@@ -156,7 +157,8 @@ public final class Shell {
     String input;
     Command command;
     String[] tokens;
-    Game game = null;
+    ShellController shellController = new ShellController(new DemoView());
+    System.out.println(HELP_TEXT_FOR_SHELL);
 
     while (true) {
       System.out.print(PROMPT);
@@ -167,9 +169,14 @@ public final class Shell {
       tokens = input.trim().split("\\s+");
       command = parseCommand(tokens);
       if (command == Command.QUIT) {
+        shellController.disconnectClient();
         break;
       }
-      game = command.excecute(game, tokens);
+      try {
+        shellController = command.execute(shellController, tokens);
+      } catch (Exception e ) {
+        error(e.getMessage());
+      }
     }
 
   }
@@ -178,86 +185,37 @@ public final class Shell {
     switch (tokens[0].toUpperCase()) {
       case "":
         return Command.NO_COMMAND;
-      case "NEW":
-        return parseCommandNEW(tokens);
-      case "PLAYER":
-        return Command.PLAYER;
-      case "PRINT":
-        return Command.PRINT;
-      case "CHECK":
-        return Command.CHECK;
-      case "HELP":
-        return Command.HELP;
-      case "MOVE_FROM_HAND":
-        return Command.MOVE_FROM_HAND;
-      case "MOVE_ON_TABLE":
-        return Command.MOVE_ON_TABLE;
-      case "DRAW":
-        return Command.DRAW;
+      case "HOST":
+      return Command.HOST;
+      case "JOIN":
+      return Command.JOIN;
       case "START":
         return Command.START;
-      case "QUIT":
-        return Command.QUIT;
-      case "UNDO":
-        return Command.UNDO;
+      case "PUT_STONE":
+        return Command.PUT_STONE;
+      case "MOVE_ON_TABLE":
+        return Command.MOVE_ON_TABLE;
       case "MOVE_ON_HAND":
         return Command.MOVE_ON_HAND;
+      case "PRINT":
+      return Command.PRINT;
+      case "CHECK":
+      return Command.CHECK;
+      case "HELP":
+      return Command.HELP;
+      case "QUIT":
+      return Command.QUIT;
+      case "UNDO":
+      return Command.UNDO;
+      case "DRAW":
+        return Command.DRAW;
+      case "RESET":
+        return Command.RESET;
       default:
         error(Command.NOT_VALID.toString());
         return Command.NOT_VALID;
     }
     
-  }
-
-  private static Command parseCommandNEW(String[] tokens) {
-    if (tokens.length > 2) {
-      error(MISSING_OR_TOO_MUCH_TOKENS_FOR + Command.NEW);
-      return Command.NOT_VALID;
-    }
-    return Command.NEW;
-  }
-
-
-  private static void print(Game game) {
-//    StringBuilder stringBuilder = printTable(new StringBuilder(), game.getTableStones()).append('\n');
-//    stringBuilder = printCurrentPlyer(stringBuilder, game.getCurrentPlayerStones());
-    StringBuilder stringBuilder = printGame(game.getTableWidth(), game.getTableHeight(),
-        new StringBuilder(), game.getTableStones()).append('\n');
-    System.out.print(printGame(game.getCurrentPlayerHandWidth(), game.getCurrentPlayerHandHeight(),
-        stringBuilder, game.getCurrentPlayerStones()));
-  }
-  private static StringBuilder printGame(int width, int height, StringBuilder stringBuilder, Map<Coordinate, Stone> stones) {
-    Stone stone;
-
-    for (int j = 0; j < height; j++) {
-      for (int i = 0; i < width; i++) {
-        stone = stones.get(new Coordinate(i, j));
-        // builder = stone-color + stone-number + ANSI_RESET
-        stringBuilder.append(parseColor(stone));
-        stringBuilder.append((stone == null) ? 0 : Integer.toHexString(stone.getNumber()).toUpperCase())
-            .append(ANSI_RESET);
-      }
-      stringBuilder.append('\n'); // for every row of the gird
-    }
-    return stringBuilder;
-  }
-
-  private static String parseColor(Stone stone) {
-    if (stone == null) {
-      return WHITE;
-    }
-    switch (stone.getColor()) {
-      case BLACK:
-        return BLACK;
-      case YELLOW:
-        return YELLOW;
-      case BLUE:
-        return BLUE;
-      case RED:
-        return RED;
-      default:
-        return JOKER;
-    }
   }
 
   private static void error(String message) {

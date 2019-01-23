@@ -2,18 +2,19 @@ package game;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public interface Game {
 
-  void setPlayer(int age);
+  void setPlayer(String name, int age);
 
   void start();
 
   void moveStoneOnTable(Coordinate initialPosition, Coordinate targetPosition);
 
-  void moveStoneFromHand(Coordinate initialPosition, Coordinate targetPosition);
+  void putStone(Coordinate initialPosition, Coordinate targetPosition);
 
-  void moveStoneOnHand(int playerPosition, Coordinate initialPosition, Coordinate targetPosition);
+  void moveStoneOnHand(int playerID, Coordinate initialPosition, Coordinate targetPosition);
 
   void drawStone();
 
@@ -29,21 +30,27 @@ public interface Game {
 
   Map<Coordinate, Stone> getTableStones();
 
-  Map<Coordinate, Stone> getCurrentPlayerStones();
+  Map<Coordinate, Stone> getPlayerStones(int playerID);
 
   List<Integer> getPlayerHandSizes();
 
   int getBagSize();
 
-  int getCurrentPlayerPosition();
+  int getCurrentPlayerID();
 
   int getTableWidth();
 
   int getTableHeight();
 
-  int getCurrentPlayerHandWidth();
+  int getPlayerHandWidth(int playerID);
 
-  int getCurrentPlayerHandHeight();
+  int getPlayerHandHeight(int playerID);
+
+  int getNumberOfPlayers();
+
+  List<Entry<Integer, Integer>> getFinalRank();
+
+  List<String> getPlayerNames();
 
   // ? int getTime();
 }

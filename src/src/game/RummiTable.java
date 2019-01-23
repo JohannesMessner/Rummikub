@@ -14,7 +14,7 @@ public class RummiTable implements Grid {
 
   private Map<Coordinate, Stone> stones;
 
-  public RummiTable() {
+  RummiTable() {
     stones = new HashMap<>(WIDTH * HEIGHT);
   }
 
@@ -24,6 +24,10 @@ public class RummiTable implements Grid {
 
   @Override public void setStone(Coordinate coordinate, Stone stone) {
     stones.put(coordinate, stone);
+  }
+
+  @Override public Stone removeStone(Coordinate coordinate) {
+    return stones.remove(coordinate);
   }
 
   @Override public int getWidth() {
@@ -54,9 +58,9 @@ public class RummiTable implements Grid {
 
      for (Coordinate coordinate : stones.keySet()) {
        // check if all coordinates of stones in stones are confirmed (also the current coordinate)
-      if (checkingList.isEmpty()) {
-        return true;
-      }
+       if (checkingList.isEmpty()) {
+         return true;
+       }
        // check if the first(current) coordinate of the potential set is already confirmed
        if (checkingList.contains(coordinate)) {
          col = coordinate.getCol();
@@ -100,11 +104,11 @@ public class RummiTable implements Grid {
       stone = stones.get(new Coordinate(coordinate.getCol() + i + 1, coordinate.getRow()));
     }
     // check the consistency with the name and the color of the non-joker stone
-    return isVaildGroup(setSize, coordinate, stone.getNumber())
-        || isVaildRun(setSize, coordinate, stone.getColor());
+    return isValidGroup(setSize, coordinate, stone.getNumber())
+        || isValidRun(setSize, coordinate, stone.getColor());
   }
 
-  private boolean isVaildGroup(int setSize, Coordinate coordinate, int expectedNumber) {
+  private boolean isValidGroup(int setSize, Coordinate coordinate, int expectedNumber) {
     if (setSize > MAX_GROUP_SIZE) {
       return false;
     }
@@ -126,13 +130,13 @@ public class RummiTable implements Grid {
     return true;
   }
 
-  private boolean isVaildRun(int setSize, Coordinate coordinate, Color expectedColor) {
+  private boolean isValidRun(int setSize, Coordinate coordinate, Color expectedColor) {
     Stone stone;
+    Color color;
+    int number;
     int col = coordinate.getCol();
     int row = coordinate.getRow();
     int expectedNumber = 0;
-    Color color;
-    int number;
 
     for (int i = 0; i < setSize; i++) {
       stone = stones.get(new Coordinate(col + i, row));
@@ -148,5 +152,13 @@ public class RummiTable implements Grid {
       expectedNumber = (expectedNumber == 0) ? number + 1 : expectedNumber + 1;
     }
     return true;
+  }
+
+  public static void main(String[] args) {
+    RummiTable table = new RummiTable();
+    table.setStone(new Coordinate(0, 0), new Stone(Color.YELLOW, 5));
+    table.setStone(new Coordinate(1, 0), new Stone(Color.BLUE, 5));
+    table.setStone(new Coordinate(2, 0), new Stone());
+    System.out.println(table.isConsistent());
   }
 }
