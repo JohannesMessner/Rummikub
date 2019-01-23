@@ -57,5 +57,16 @@ class RummiTableTest {
     assertTrue(rummiTable3.isConsistent());
   }
 
+  public void isTableNotConsistent(){
+    rummiTable4.setStone(new Coordinate(0,0), new Stone(Stone.Color.RED, 1 ));
+    rummiTable4.setStone(new Coordinate(1,0), new Stone(Stone.Color.RED, 2 ));
+    rummiTable4.setStone(new Coordinate(2,0), new Stone(Stone.Color.RED, 3 ));
+    rummiTable4.setStone(new Coordinate(0,1), new Stone(Stone.Color.RED, 1 ));
+    rummiTable4.setStone(new Coordinate(1,1), new Stone(Stone.Color.BLUE, 1 ));
+    rummiTable4.setStone(new Coordinate(2,1), new Stone(Stone.Color.YELLOW, 1 ));
+
+    assertTrue(rummiTable4.isConsistent());
+  }
+
 
 }
