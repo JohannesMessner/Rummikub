@@ -14,13 +14,6 @@ import java.net.UnknownHostException;
 
 public class RummiServer extends Thread implements Server {
 
-
-  public static void main(String[] args) {
-//    RummiServer s = new RummiServer();
-//    s.start();
-  }
-
-
   private static final int MAX_CLIENTS = 4;
   private static final int PORT = 48410;
   private static Socket[] clients = new Socket[MAX_CLIENTS];
@@ -73,7 +66,7 @@ public class RummiServer extends Thread implements Server {
           System.out.println("number of clients: " + numOfClients);
         }
       }
-      //cleanup();
+      cleanup();
     } catch (IOException e) {
       this.running = false;
     }
@@ -130,9 +123,11 @@ public class RummiServer extends Thread implements Server {
       suicide();
     }
 
-    //notifyAll();
   }
 
+  /**
+   * Disconnects all clients.
+   */
   private void cleanup() {
     for (int i = 0; i < clients.length; i++) {
       if (clients[i] != null) {
@@ -187,6 +182,9 @@ public class RummiServer extends Thread implements Server {
     return InetAddress.getLocalHost().getHostAddress();
   }
 
+  /**
+   * Disconnects all clients and stops the Thread.
+   */
   public void suicide() {
     cleanup();
     running = false;
