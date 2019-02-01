@@ -43,6 +43,7 @@ public class RummiGame implements Game {
 
   /** Updates currentPlayerID. */
   private boolean nextTurn() {
+    //If the game did not start yet you cannot declare nextTurn.
     if (isGameOn == false) {
       System.out.println(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
       return false;
@@ -80,7 +81,7 @@ public class RummiGame implements Game {
    */
   @Override
   public boolean start() {
-    if (isGameOn) {
+    if (isGameOn || players.size() < 2) {
       return false;
     }
     if (players.size() >= MIN_PLAYERS) {
