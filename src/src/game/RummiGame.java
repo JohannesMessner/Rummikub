@@ -1,5 +1,8 @@
 package game;
 
+import constants.GlobalConstants;
+import constants.ErrorMessages;
+
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Comparator;
@@ -14,20 +17,18 @@ import java.util.stream.Collectors;
  * Model for the board game Rummikub.
  */
 public class RummiGame implements Game {
-  private static final int MIN_PLAYERS = 2;
-  private static final int MAX_PLAYERS = 4;
-  // the number of stones players receive at the beginning
-  private static final int FIRST_STONES = 14;
-  // the minimal points every player should make for their first move
-  private static final int MIN_FIRST_MOVE_POINTS = 30;
+  private static final int MIN_PLAYERS = GlobalConstants.getMinPlayers();
+  private static final int MAX_PLAYERS = GlobalConstants.getMaxPlayers();
+  private static final int FIRST_STONES = GlobalConstants.getFirstStones();
+  private static final int MIN_FIRST_MOVE_POINTS = GlobalConstants.getMinFirstMovePoints();
 
-  private RummiTable table; // table of the game
+  private RummiTable table;
   private HashMap<Integer, Player> players;
-  private RummiBag bag; // bag where all stones are filled
-  private Stack<MoveTrace> trace; // history of the current players each move
+  private RummiBag bag;
+  private Stack<MoveTrace> trace;
   private boolean isGameOn;
   private int currentPlayerID;
-  private int currentPoints; // the points of the first move of a current player
+  private int currentPoints;
 
   public RummiGame() {
     table = new RummiTable();
@@ -35,16 +36,16 @@ public class RummiGame implements Game {
     trace = new Stack<>();
   }
 
-  /** Gives a current player. */
+  /** Returns the current player. */
   private Player currentPlayer() {
     return players.get(currentPlayerID);
   }
 
-  /** Updates the currentPlayerID. */
-  private void nextTurn() {
-    if (!isGameOn) {
-      System.out.println("GAME NOT ON!");
-      return;
+  /** Updates currentPlayerID. */
+  private boolean nextTurn() {
+    if (isGameOn == false) {
+      System.out.println(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
+      return false;
     }
     // reset currentPoints
     currentPoints = 0;
@@ -52,6 +53,7 @@ public class RummiGame implements Game {
     do {
       currentPlayerID = (currentPlayerID + 1) % MAX_PLAYERS;
     } while (!players.containsKey(currentPlayerID));
+    return true;
   }
 
   /**
@@ -101,9 +103,11 @@ public class RummiGame implements Game {
     for (int i = 0; i < FIRST_STONES; i++) {
       for (int j = 0; j < players.size(); j++) {
         drawStone();
+
+        }
       }
     }
-  }
+
 
   /** Sets the youngest player as starter. */
   private void setStartPlayer() {
@@ -300,9 +304,13 @@ public class RummiGame implements Game {
    * Makes the current player draw a stone from the bag and finish their turn.
    */
   @Override
-  public void drawStone() {
+  public boolean drawStone(){
+    if (isGameOn == false){
+      return false;
+    }
     currentPlayer().pushStone(bag.removeStone());
     nextTurn();
+    return true;
   }
 
 
@@ -325,6 +333,8 @@ public class RummiGame implements Game {
     }
     if (currentPlayerID == playerID) {
       nextTurn();
+
+
     }
   }
 
@@ -399,6 +409,7 @@ public class RummiGame implements Game {
     if (currentPlayer().getHandSize() == 0) {
       isGameOn = false;
     }
+
     nextTurn();
     return true;
   }

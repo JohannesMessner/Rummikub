@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
+
 import org.junit.Test;
 
 
@@ -220,5 +221,13 @@ public class RummiGameTest {
     System.out.println(game.getTrace());
     System.out.println("---check if reset worked");
     System.out.println(game.getTrace().toString().equals(firstTable));
+  }
+
+  @Test
+  public void gameOnOffTest(){
+    RummiGame game = new RummiGame();
+    game.setPlayer(0, "player1", 0);
+    game.setPlayer(1, "player2", 3);
+    assertFalse(game.drawStone());
   }
 }

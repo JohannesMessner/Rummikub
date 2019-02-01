@@ -155,7 +155,9 @@ class RequestHandler {
             return;
           }
           game.reset();
-          game.drawStone();
+            game.drawStone();
+
+
           // send the player new hand with a drawn stone
           sendHandToPlayer(playerID);
           // send the original table to all
@@ -197,6 +199,8 @@ class RequestHandler {
           sendHandToPlayer(playerID);
           // draw stone cause table not consistent and the time is out
           game.drawStone();
+
+
           sendHandToPlayer(playerID);
           // send changed hand to player
           sendHandSizesToAll();

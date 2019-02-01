@@ -84,7 +84,7 @@ public interface Game {
   void moveStoneOnHand(int playerID, Coordinate sourcePosition, Coordinate targetPosition);
 
   /** Makes the current Player of this Game to draw a stone. */
-  void drawStone();
+  boolean drawStone();
 
   /**
    * Removes a Player with the given playerID out of this Game.
