@@ -226,12 +226,14 @@ public class RummiGameTest {
   @Test
   public void gameOnOffTest(){
     RummiGame game = new RummiGame();
+    assertFalse(game.hasWinner());
     game.setPlayer(0, "player1", 0);
     assertFalse(game.start());
     game.setPlayer(1, "player2", 3);
     assertFalse(game.drawStone());
     game.start();
     assertEquals(game.getNumberOfPlayers(), 2);
+    assertFalse(game.hasWinner());
 
   }
 

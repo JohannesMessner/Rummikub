@@ -295,10 +295,6 @@ public class RummiGame implements Game {
   @Override
   public void moveStoneOnHand(int playerID, Coordinate sourcePosition, Coordinate targetPosition) {
     players.get(playerID).moveStone(sourcePosition, targetPosition);
-//    if (playerID == currentPlayerID){
-//      // store this move
-//      trace.push(new MoveTrace("MOVESTONEONHAND", sourcePosition, targetPosition));
-//    }
   }
 
   /**
@@ -322,7 +318,7 @@ public class RummiGame implements Game {
    */
   @Override public void removePlayer(int playerID) {
     System.out.println("---number of players: " + players.size());
-    if (!isGameOn) {
+    if (isGameOn == false) {
       players.remove(playerID);
       return;
     }
@@ -380,6 +376,9 @@ public class RummiGame implements Game {
    */
   @Override
   public boolean hasWinner() {
+    if (isGameOn == false){
+      return false;
+    }
     return currentPlayer().getHandSize() == 0;
   }
 
