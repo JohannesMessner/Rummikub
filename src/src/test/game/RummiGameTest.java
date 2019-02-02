@@ -250,7 +250,30 @@ public class RummiGameTest {
 
   }
 
+  @Test
+  public void testNextTurn() {
+    RummiGame game = new RummiGame();
+    game.setPlayer(0, "player1", 0);
+    game.setPlayer(1, "player2", 3);
+    game.start();
 
+    assertFalse(game.getTable().isConsistent());
+
+    game.getTableStones().put(new Coordinate(0, 0), new Stone(Stone.Color.BLACK, 1));
+    game.getTableStones().put(new Coordinate(1, 0), new Stone(Stone.Color.BLACK, 2));
+    game.getTableStones().put(new Coordinate(2, 0), new Stone(Stone.Color.BLACK, 3));
+    game.getTableStones().put(new Coordinate(3, 0), new Stone(Stone.Color.BLACK, 4));
+    game.getTableStones().put(new Coordinate(4, 0), new Stone(Stone.Color.BLACK, 5));
+    game.getTableStones().put(new Coordinate(5, 0), new Stone(Stone.Color.BLACK, 6));
+    game.getTableStones().put(new Coordinate(6, 0), new Stone(Stone.Color.BLACK, 7));
+    game.getTableStones().put(new Coordinate(7, 0), new Stone(Stone.Color.BLACK, 8));
+
+    assertTrue(game.getTable().isConsistent());
+    assertEquals(game.getCurrentPlayerID(), 0);
+    assertTrue(game.isConsistent());
+
+    assertEquals(game.getCurrentPlayerID(), 1);
+  }
 
 
 }

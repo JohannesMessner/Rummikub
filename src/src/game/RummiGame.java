@@ -419,9 +419,9 @@ public class RummiGame implements Game {
   @Override
   public boolean isConsistent() {
     // check if the current player has played something yet
-    if (currentPoints == 0) {
-      return false;
-    }
+    //if (currentPoints == 0) {
+    //  return false;
+    //}
     // check if the current player has played their (first) turn in this game
     if (/*!currentPlayer().hasPlayedFirstMove() && currentPoints < MIN_FIRST_MOVE_POINTS || */!table.isConsistent()) {
       return false;
@@ -523,5 +523,9 @@ public class RummiGame implements Game {
 
   public void setCurrentPoints(int currentPoints){
     this.currentPoints = currentPoints;
+  }
+
+  public RummiTable getTable(){
+    return table;
   }
 }
