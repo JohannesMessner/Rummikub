@@ -22,19 +22,29 @@ public class RummiGameTest {
     assertTrue(game1.getNumberOfPlayers() == 2);
     assertTrue((game1.getBagSize() + game1.getPlayerHandSizes().get(0) + game1.getPlayerHandSizes().get(1)) == 106);
     assertTrue(game1.getCurrentPlayerID() == 1);
+
     assertEquals(game1.getTableHeight(), 8);
     assertEquals(game1.getTableWidth(), 26);
     assertEquals(game1.getPlayerHandHeight(1), 3);
     assertEquals(game1.getPlayerHandWidth(1), 18);
 
+    System.out.println(game1.getPlayerStones(0));
+    System.out.println(game1.getPlayerStones(1));
+    System.out.println(game1.getCurrentPlayerID());
+
     game1.putStone(new Coordinate(0, 0), new Coordinate(0, 0));
     game1.putStone(new Coordinate(1, 0), new Coordinate(1, 0));
     game1.putStone(new Coordinate(2, 0), new Coordinate(2, 0));
 
+    System.out.println(game1.getPlayerStones(0));
+    System.out.println(game1.getPlayerStones(1));
+    System.out.println(game1.getCurrentPlayerID());
     game1.moveStoneOnTable(new Coordinate(0, 0), new Coordinate(3, 0));
     game1.moveStoneOnTable(new Coordinate(1, 0), new Coordinate(4, 0));
 
-    assertTrue(game1.getTableStones().size() == 3);
+    System.out.println(game1.getTableStones());
+    System.out.println(game1.getBagSize());
+    assertEquals(game1.getTableStones().size(), 3);
 
     assertTrue(game1.getPlayerStones(1).get(new Coordinate(0, 0)) == null);
 
@@ -68,6 +78,9 @@ public class RummiGameTest {
     game2.getTableStones().put(new Coordinate(5, 0), new Stone(Stone.Color.BLACK, 6));
     game2.getTableStones().put(new Coordinate(6, 0), new Stone(Stone.Color.BLACK, 7));
     game2.getTableStones().put(new Coordinate(7, 0), new Stone(Stone.Color.BLACK, 8));
+
+
+    game2.setCurrentPoints(2);
 
     assertTrue(game2.isConsistent());
 
@@ -236,6 +249,8 @@ public class RummiGameTest {
     assertFalse(game.hasWinner());
 
   }
+
+
 
 
 }

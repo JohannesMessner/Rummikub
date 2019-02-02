@@ -149,4 +149,20 @@ public class RummiTableTest {
     assertTrue(table.isConsistent());
 
   }
+
+  @Test
+  public void countPointsTest() {
+    RummiTable table = new RummiTable();
+    table.setStone(new Coordinate(17, 7), new Stone(Color.BLUE, 10));
+    table.setStone(new Coordinate(18, 7), new Stone(Color.YELLOW, 12));
+    table.setStone(new Coordinate(19, 7), new Stone(Color.BLACK, 13 ));
+
+    assertEquals(table.countPoints(), 35);
+
+    table.setStone(new Coordinate(17, 6), new Stone(Color.JOKER, 10));
+    table.setStone(new Coordinate(18, 6), new Stone(Color.JOKER, 12));
+    table.setStone(new Coordinate(19, 6), new Stone(Color.JOKER, 13 ));
+
+    assertEquals(table.countPoints(), 65);
+  }
 }

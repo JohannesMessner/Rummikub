@@ -45,4 +45,18 @@ public class RummiHandTest {
 
   }
 
+  @Test
+  public void countPointsOnHandTest() {
+    RummiHand rummiHand = new RummiHand();
+    rummiHand.setStone(new Coordinate(1,1), new Stone(Stone.Color.JOKER, 1));
+    rummiHand.setStone(new Coordinate(2,1), new Stone(Stone.Color.JOKER, 2));
+
+    assertEquals(rummiHand.countPoints(), 20);
+
+    rummiHand.setStone(new Coordinate(3,1), new Stone(Stone.Color.BLUE, 1));
+    rummiHand.setStone(new Coordinate(4,1), new Stone(Stone.Color.RED, 2));
+
+    assertEquals(rummiHand.countPoints(), 23);
+  }
+
 }

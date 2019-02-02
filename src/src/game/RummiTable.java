@@ -1,6 +1,7 @@
 package game;
 
 
+import constants.GlobalConstants;
 import game.Stone.Color;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -187,6 +188,21 @@ public class RummiTable implements Grid {
       expectedNumber = (++expectedNumber > Stone.MAX_VALUE) ? Stone.MIN_VALUE : expectedNumber;
     }
     return true;
+  }
+
+  public int countPoints() {
+    int counter = 0;
+    int stoneValue;
+    for (Map.Entry<Coordinate, Stone> entry : stones.entrySet()) {
+      Stone currentStone = entry.getValue();
+      if (currentStone.getColor() == Color.JOKER){
+        stoneValue = GlobalConstants.getJokerPoints();
+      } else {
+        stoneValue = currentStone.getNumber();
+      }
+      counter = counter + stoneValue;
+    }
+    return counter;
   }
 
   @Override

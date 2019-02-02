@@ -28,7 +28,9 @@ public class RummiGame implements Game {
   private Stack<MoveTrace> trace;
   private boolean isGameOn;
   private int currentPlayerID;
-  private int currentPoints;
+  private int pointsOnHandBefore;
+  private int pointsOnHandAfter;
+  private int currentPoints = 0;
 
   public RummiGame() {
     table = new RummiTable();
@@ -41,6 +43,14 @@ public class RummiGame implements Game {
     return players.get(currentPlayerID);
   }
 
+  private int countPointsOnHand() {
+    return players.get(currentPlayerID).getHand().countPoints();
+  }
+
+  private int countPointsOnTable() {
+    return table.countPoints();
+  }
+
   /** Updates currentPlayerID. */
   private boolean nextTurn() {
     //If the game did not start yet you cannot declare nextTurn.
@@ -48,12 +58,25 @@ public class RummiGame implements Game {
       System.out.println(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
       return false;
     }
-    // reset currentPoints
-    currentPoints = 0;
+    pointsOnHandAfter = countPointsOnHand();
+
+    if (pointsOnHandBefore - pointsOnHandAfter  >= MIN_FIRST_MOVE_POINTS){
+      players.get(currentPlayerID).playedFirstMove();
+    }
+
+    if (players.get(currentPlayerID).hasPlayedFirstMove() == false){
+      System.out.println(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
+      return false;
+    }
+
+
     // the ID of the current player will be updated (0 follows after 3)
     do {
       currentPlayerID = (currentPlayerID + 1) % MAX_PLAYERS;
     } while (!players.containsKey(currentPlayerID));
+
+    pointsOnHandBefore = countPointsOnHand();
+
     return true;
   }
 
@@ -90,6 +113,7 @@ public class RummiGame implements Game {
       table.clear();
       handOutStones();
       setStartPlayer();
+      pointsOnHandBefore = countPointsOnHand();
     }
     return true;
   }
@@ -103,8 +127,7 @@ public class RummiGame implements Game {
     // hand out stones
     for (int i = 0; i < FIRST_STONES; i++) {
       for (int j = 0; j < players.size(); j++) {
-        drawStone();
-
+        players.get(j).pushStone(bag.removeStone());
         }
       }
     }
@@ -340,7 +363,7 @@ public class RummiGame implements Game {
     while (!trace.empty()) {
       undo();
     }
-//    currentPoints = 0;
+    currentPoints = 0;
   }
 
   /** Undoes the last move of the current player. */
@@ -362,6 +385,7 @@ public class RummiGame implements Game {
       case "MOVESTONEFROMHAND":
         // get back stone from the table to the player hand
         Stone stone = table.removeStone(targetPosition);
+
         currentPoints -= stone.getNumber();
         currentPlayer().pushStone(stone);
         return;
@@ -395,9 +419,9 @@ public class RummiGame implements Game {
   @Override
   public boolean isConsistent() {
     // check if the current player has played something yet
-    //if (currentPoints == 0) {
-    //  return false;
-    //}
+    if (currentPoints == 0) {
+      return false;
+    }
     // check if the current player has played their (first) turn in this game
     if (/*!currentPlayer().hasPlayedFirstMove() && currentPoints < MIN_FIRST_MOVE_POINTS || */!table.isConsistent()) {
       return false;
@@ -495,5 +519,9 @@ public class RummiGame implements Game {
         .map((entry) -> new SimpleEntry<>(entry.getKey(), entry.getValue().getPoints()))
         .sorted(Comparator.comparing(Entry::getValue)).collect(Collectors.toList());
     return rank.stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+  }
+
+  public void setCurrentPoints(int currentPoints){
+    this.currentPoints = currentPoints;
   }
 }

@@ -1,5 +1,6 @@
 package game;
 
+import constants.GlobalConstants;
 import game.Stone.Color;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -103,6 +104,21 @@ public class RummiHand implements Grid {
         stones.put(new Coordinate(col, row), iterator.next());
       }
     }
+  }
+
+  public int countPoints() {
+    int counter = 0;
+    int stoneValue;
+    for (Map.Entry<Coordinate, Stone> entry : stones.entrySet()) {
+      Stone currentStone = entry.getValue();
+      if (currentStone.getColor() == Color.JOKER){
+        stoneValue = GlobalConstants.getJokerPoints();
+      } else {
+        stoneValue = currentStone.getNumber();
+      }
+      counter = counter + stoneValue;
+    }
+    return counter;
   }
 
   //Testmethods
