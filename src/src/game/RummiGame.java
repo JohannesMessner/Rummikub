@@ -489,4 +489,8 @@ public class RummiGame implements Game {
         .sorted(Comparator.comparing(Entry::getValue)).collect(Collectors.toList());
     return rank.stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue));
   }
+
+  public RummiTable getTable() {
+    return table;
+  }
 }
