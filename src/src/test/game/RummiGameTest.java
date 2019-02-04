@@ -1,12 +1,14 @@
 package game;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+
+import globalconstants.Constants;
 import java.util.Map;
 import org.junit.Test;
-
-import globalconstants.*;
-
-import static org.junit.Assert.*;
 
 
 public class RummiGameTest {
@@ -277,5 +279,34 @@ public class RummiGameTest {
 
     game.getCurrentPlayer().hasPlayedFirstMove();
 
+  }
+
+  @Test
+  public void testFirstMoveWithJoker() {
+    RummiGame game = new RummiGame();
+    game.join(0, "Helga", 25);
+    game.join(1, "Heinz", 21);
+    game.start();
+    Map<Coordinate, Stone> table = game.getTableStones();
+
+    table.put(new Coordinate(4, 5), new Stone(Stone.Color.BLUE, 8));
+    table.put(new Coordinate(5, 5), new Stone());
+    table.put(new Coordinate(6, 5), new Stone(Stone.Color.BLUE, 10));
+    assertThrows(Exception.class, () -> game.confirmMove(game.getCurrentPlayerID()));
+
+    table.put(new Coordinate(4, 5), new Stone(Stone.Color.BLUE, 9));
+    table.put(new Coordinate(5, 5), new Stone());
+    table.put(new Coordinate(6, 5), new Stone(Stone.Color.BLUE, 11));
+    game.confirmMove(game.getCurrentPlayerID());
+
+    table.put(new Coordinate(4, 6), new Stone(Stone.Color.BLUE, 9));
+    table.put(new Coordinate(5, 6), new Stone());
+    table.put(new Coordinate(6, 6), new Stone(Stone.Color.BLACK, 9));
+    assertThrows(Exception.class, () -> game.confirmMove(game.getCurrentPlayerID()));
+
+    table.put(new Coordinate(4, 6), new Stone(Stone.Color.BLUE, 10));
+    table.put(new Coordinate(5, 6), new Stone());
+    table.put(new Coordinate(6, 6), new Stone(Stone.Color.BLACK, 10));
+    game.confirmMove(game.getCurrentPlayerID());
   }
 }
