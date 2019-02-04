@@ -29,7 +29,7 @@ public class RummiGame implements Game {
   private Stack<MoveTrace> trace; // history of the current Player's each move
   private boolean gameOn; // the state of game that tells if it is on going or not
   private int currentPlayerId; // the id of the current player
-  private int currentPoints; // the points of the first move of a current player
+  private int tablePoints; // the points of the Table
 
   /**
    * Initializes the RummiGame for Rummikub board game.
@@ -57,8 +57,6 @@ public class RummiGame implements Game {
       System.out.println("GAME NOT ON!");
       return;
     }
-    // reset currentPoints
-    currentPoints = 0;
     // the ID of the current player will be updated (0 follows after 3)
     do {
       currentPlayerId = (currentPlayerId + 1) % MAX_PLAYERS;
@@ -287,8 +285,6 @@ public class RummiGame implements Game {
     if (movingStone == null) {
       return false;
     }
-    // add up the currentPoints
-    currentPoints += movingStone.getNumber();
     table.setStone(targetPosition, movingStone);
     // store this move
     trace.push(new MoveTrace(Move.PUT_STONE, sourcePosition, targetPosition));
@@ -381,7 +377,6 @@ public class RummiGame implements Game {
       default:
         // get back stone from the table to the player hand
         Stone stone = table.removeStone(targetPosition);
-        currentPoints -= stone.getNumber();
         currentPlayer().pushStone(stone);
     }
   }
@@ -405,16 +400,18 @@ public class RummiGame implements Game {
    * @return true if only if this Game is consistent
    */
   @Override public boolean isConsistent() {
-    // check if the current player has played at least a Stone
-    if (currentPoints == 0) {
+    if (!table.isConsistent()) {
       return false;
     }
-//    // check if the current player has played their (first) turn in this game
-//    if (/*!currentPlayer().hasPlayedFirstMove() && currentPoints < MIN_FIRST_MOVE_POINTS || */
-//        // and the consistency of the Table
-//        !table.isConsistent()) {
-//      return false;
-//    }
+    // check if the current player has played at least a Stone
+    int playedPoints = table.getPoints() - tablePoints;
+    if (playedPoints == 0) {
+      return false;
+    }
+    if (!currentPlayer().hasPlayedFirstMove() && playedPoints < MIN_FIRST_MOVE_POINTS) {
+      return false;
+    }
+    tablePoints += playedPoints;
     currentPlayer().notifyEndOfFirstMove();
     // clear the moveData for the next turn
     trace.clear();

@@ -136,7 +136,7 @@ class Player {
    * @return the sum of the points of stones on this player's hand
    */
   int getPoints() {
-    return -hand.getStones().values().stream().mapToInt(Stone::getNumber).sum();
+    return -hand.getPoints();
   }
 
   void sortHandByGroup() {

@@ -13,7 +13,7 @@ public class Stone {
   private static final int JOKER_POINTS = 20;
 
   private final Color color;
-  private final int number;
+  private int number;
 
   public Stone(Color color, int number) {
     this.color = color;
@@ -31,6 +31,10 @@ public class Stone {
 
   public int getNumber() {
     return number;
+  }
+
+  public void setNumber(int number) {
+    this.number = number;
   }
 
   // Testmethods

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import game.MoveTrace.Move;
+import game.Stone.Color;
 import java.util.Map;
 import org.junit.Test;
 
@@ -13,11 +15,13 @@ public class RummiGameTest {
   @Test
   public void initTestWithoutMoveOnHand() {
     RummiGame game1 = new RummiGame();
-    game1.setPlayer(0, "Cedrik", 25);
-    game1.setPlayer(1, "Hyunsung", 21);
+    game1.setPlayer(0, "Helga", 25);
+    game1.setPlayer(1, "Heinz"
+        + "", 21);
     game1.start();
 
-    assertTrue(game1.getPlayerNames().get(1) == "Hyunsung");
+    assertTrue(game1.getPlayerNames().get(1) == "Heinz"
+        + "");
     assertTrue(game1.getNumberOfPlayers() == 2);
     assertTrue((game1.getBagSize() + game1.getPlayerHandSizes().get(0) + game1.getPlayerHandSizes().get(1)) == 106);
     assertTrue(game1.getCurrentPlayerId() == 1);
@@ -38,12 +42,12 @@ public class RummiGameTest {
     assertTrue(game1.getPlayerStones(1).get(new Coordinate(0, 0)) == null);
 
 
-    assertEquals(game1.getTrace().peek().getMove(), "MOVESTONEONTABLE");
+    assertEquals(game1.getTrace().peek().getMove(), Move.TABLE_MOVE);
     game1.undo();
-    assertEquals(game1.getTrace().peek().getMove(), ("MOVESTONEONTABLE"));
+    assertEquals(game1.getTrace().peek().getMove(), (Move.TABLE_MOVE));
     game1.undo();
     game1.undo();
-    assertEquals(game1.getTrace().peek().getMove(), ("MOVESTONEFROMHAND"));
+    assertEquals(game1.getTrace().peek().getMove(), (Move.PUT_STONE));
     game1.undo();
     game1.reset();
     game1.undo();
@@ -55,8 +59,9 @@ public class RummiGameTest {
   @Test
   public void consistencyTest() {
     RummiGame game2 = new RummiGame();
-    game2.setPlayer(0, "Cedrik", 25);
-    game2.setPlayer(1, "Hyunsung", 21);
+    game2.setPlayer(0, "Helga", 25);
+    game2.setPlayer(1, "Heinz"
+        + "", 21);
     game2.start();
 
     game2.getTableStones().put(new Coordinate(0, 0), new Stone(Stone.Color.BLACK, 1));
@@ -225,8 +230,9 @@ public class RummiGameTest {
   @Test
   public void testingMethod() {
     RummiGame game2 = new RummiGame();
-    game2.setPlayer(0, "Cedrik", 25);
-    game2.setPlayer(1, "Hyunsung", 21);
+    game2.setPlayer(0, "Helga", 25);
+    game2.setPlayer(1, "Heinz"
+        + "", 21);
     game2.start();
 
     game2.getTableStones().put(new Coordinate(0, 0), new Stone(Stone.Color.BLACK, 1));
@@ -244,8 +250,9 @@ public class RummiGameTest {
   @Test
   public void testRestartGame() {
     RummiGame game2 = new RummiGame();
-    game2.setPlayer(0, "Cedrik", 25);
-    game2.setPlayer(1, "Hyunsung", 21);
+    game2.setPlayer(0, "Helga", 25);
+    game2.setPlayer(1, "Heinz"
+        + "", 21);
     game2.start();
 
     game2.getPlayerStones(1).clear();
@@ -254,5 +261,36 @@ public class RummiGameTest {
     game2.start();
     assertEquals(game2.getPlayerStones(0).size(), 14);
 
+  }
+
+  @Test
+  public void testFirstMoveWithJoker() {
+    RummiGame game = new RummiGame();
+    game.setPlayer(0, "Helga", 25);
+    game.setPlayer(1, "Heinz"
+        + "", 21);
+    game.start();
+
+    RummiTable table = game.getTable();
+
+    table.setStone(new Coordinate(4, 5), new Stone(Color.BLUE, 8));
+    table.setStone(new Coordinate(5, 5), new Stone());
+    table.setStone(new Coordinate(6, 5), new Stone(Color.BLUE, 10));
+    assertFalse(game.isConsistent());
+
+    table.setStone(new Coordinate(4, 5), new Stone(Color.BLUE, 9));
+    table.setStone(new Coordinate(5, 5), new Stone());
+    table.setStone(new Coordinate(6, 5), new Stone(Color.BLUE, 11));
+    assertTrue(game.isConsistent());
+
+    table.setStone(new Coordinate(4, 6), new Stone(Color.BLUE, 9));
+    table.setStone(new Coordinate(5, 6), new Stone());
+    table.setStone(new Coordinate(6, 6), new Stone(Color.BLACK, 9));
+    assertFalse(game.isConsistent());
+
+    table.setStone(new Coordinate(4, 6), new Stone(Color.BLUE, 10));
+    table.setStone(new Coordinate(5, 6), new Stone());
+    table.setStone(new Coordinate(6, 6), new Stone(Color.BLACK, 10));
+    assertTrue(game.isConsistent());
   }
 }

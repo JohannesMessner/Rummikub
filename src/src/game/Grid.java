@@ -83,5 +83,9 @@ public interface Grid {
     }
     return size;
   }
+
+  default int getPoints() {
+    return getStones().values().stream().mapToInt(Stone::getNumber).sum();
+  }
 }
 
