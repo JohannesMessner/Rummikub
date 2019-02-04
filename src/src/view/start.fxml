@@ -63,7 +63,7 @@
       <VBox styleClass="relatedContent">
         <VBox styleClass="inputArea">
           <Text text="IP address:" styleClass="whiteText"/>
-          <TextField fx:id="ipField" />
+          <TextField fx:id="ipField" promptText="localhost"/>
           <Text fx:id="ipError" styleClass="errorText"
                 text="No Server Found With This IP Address!" visible="false"/>
         </VBox>
