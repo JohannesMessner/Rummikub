@@ -28,47 +28,40 @@ public class GameInfoHandler {
    */
   void applyGameInfo(Object gameInfo) {
     switch (((GameInfo) gameInfo).getGameInfoID()) {
-      // case CURRENT_PLAYER:
       case HAND:
-        //System.out.println("handling hand");
         controller.setPlayerHand(((GridInfo) gameInfo).getGrid());
-        return;
+        break;
       case TABLE:
-        //System.out.println("handling table");
         controller.setTable(((GridInfo) gameInfo).getGrid());
-        return;
+        break;
       case ERROR:
         controller.showError(((ErrorInfo) gameInfo).getErrorMessage());
-        return;
+        break;
       case BAG:
-        //System.out.println("handling bag");
         controller.setBagSize(((BagInfo) gameInfo).getSize());
-        return;
+        break;
       case YOUR_TURN:
         System.out.println("handling yourturn");
         controller.notifyTurn();
-        //controller.notifyCurrentPlayer(0);
-        return;
+        break;
       case HAND_SIZES:
-        //System.out.println("handling handsizes");
         controller.setHandSizes(((HandSizesInfo) gameInfo).getHandSizes());
-        return;
+        break;
       case PLAYER_NAMES:
-        //System.out.println("handling names");
         controller.setPlayerNames(((PlayerNamesInfo) gameInfo).getNames());
-        return;
+        break;
       case CURRENT_PLAYER:
         System.out.println("handling currentplayer");
         System.out.println("received " + ((CurrentPlayerInfo) gameInfo).getPlayerID() + " as current player");
         controller.notifyCurrentPlayer(((CurrentPlayerInfo) gameInfo).getPlayerID());
-        return;
+        break;
       case GAME_START:
         System.out.println("handling gamestart");
         controller.notifyGameStart();
-        return;
+        break;
       case RANK:
         controller.showRank(((RankInfo) gameInfo).getFinalRank());
-        return;
+        break;
       case TOO_MANY_CLIENTS:
         controller.connectionRejected();
         break;

@@ -87,7 +87,7 @@ public class MainController implements Controller {
         winnerController = loader.getController();
         winnerController.setMainController(this);
         break;
-      default: //TODO: Throw exception?
+      default:
     }
     Platform.runLater(() -> {
       Scene scene = new Scene(root, 1500, 900);
@@ -130,7 +130,12 @@ public class MainController implements Controller {
 
   }
 
-
+  /**
+   * Switches to the winner view.
+   * Should be called after a winning move.
+   *
+   * @throws IOException if the scene can't be loaded
+   */
   private void switchToWinnerScene() throws IOException {
     switchScene(ViewConstants.WINNER_FXML);
   }
@@ -188,9 +193,9 @@ public class MainController implements Controller {
   }
 
   /**
-   * Displays the final ranking of the game.
-   * complete javadoc
-   * @param finalRank
+   * Switches to winner view and displays the final ranking of the game.
+   *
+   * @param finalRank Map of player names with their respective negative points.
    */
   @Override public void showRank(Map<String, Integer> finalRank) {
     gameController.stopTimer();
@@ -287,7 +292,8 @@ public class MainController implements Controller {
   /**
    * Notifies the controller that the game has started.
    */
-  @Override public void notifyGameStart() {
+  @Override
+  public void notifyGameStart() {
     try {
       switchToGameScene();
     } catch (IOException e) {
@@ -303,14 +309,6 @@ public class MainController implements Controller {
   @Override
   public void notifyCurrentPlayer(int playerID) {
     gameController.notifyCurrentPlayer(playerID);
-  }
-
-  /**
-   * Notifies the controller that his last move was invalid.
-   */
-  @Override
-  public void notifyInvalidMove() {
-    gameController.notifyInvalidMove();
   }
 
   /**
@@ -499,6 +497,9 @@ public class MainController implements Controller {
     }
   }
 
+  /**
+   * Kills all threads and the game's timer.
+   */
   private void killThreads() {
     // delete wait- and gameController
     waitController = null;

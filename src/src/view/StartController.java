@@ -2,7 +2,6 @@ package view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
 /**
@@ -20,20 +19,12 @@ public class StartController {
 
   private MainController mainController;
 
-  @FXML
-  private TextField nameField;
-  @FXML
-  private TextField ageField;
-  @FXML
-  private TextField ipField;
-  @FXML
-  private StackPane vContainer;
-  @FXML
-  private Text ipError;
-  @FXML
-  private Text ageError;
-  @FXML
-  private Text nameError;
+  @FXML private TextField ageField;
+  @FXML private TextField ipField;
+  @FXML private TextField nameField;
+  @FXML private Text ageError;
+  @FXML private Text ipError;
+  @FXML private Text nameError;
 
   /**
    * Connects the StartController to a MainController.
@@ -44,19 +35,25 @@ public class StartController {
     this.mainController = mainController;
   }
 
+  /**
+   * Displays error for specified text field.
+   *
+   * @param error Indicator for invalid text field
+   */
   private void setError(ErrorType error) {
     switch (error) {
       case IP:
         ipField.setStyle(ViewConstants.ERROR_STYLE);
         ipError.setVisible(true);
-        return;
+        break;
       case AGE:
         ageField.setStyle(ViewConstants.ERROR_STYLE);
         ageError.setVisible(true);
-        return;
+        break;
       case NAME:
         nameField.setStyle(ViewConstants.ERROR_STYLE);
         nameError.setVisible(true);
+        break;
     }
   }
 
@@ -85,6 +82,9 @@ public class StartController {
     }
   }
 
+  /**
+   * Resets all (former invalid) text fields in form.
+   */
   private void clearErrors() {
     ipField.setStyle(null);
     ipError.setVisible(false);
@@ -94,6 +94,9 @@ public class StartController {
     ageError.setVisible(false);
   }
 
+  /**
+   * Shows help scene when help button is clicked.
+   */
   @FXML
   private void showHelpScene() {
     mainController.showHelpScene();
@@ -106,6 +109,13 @@ public class StartController {
     setError(ErrorType.IP);
   }
 
+  /**
+   * Tests form input for validity.
+   * - userName non-empty + up to 20 characters in length
+   * - age in between 6 and 150
+   *
+   * @return whether user input matches the given parameters
+   */
   private boolean isValidInput() {
     String userName = nameField.getText();
     boolean isValidInput = true;

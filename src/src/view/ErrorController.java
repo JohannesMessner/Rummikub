@@ -5,18 +5,13 @@ import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.awt.*;
-
 /**
  * Controller responsible fot the display of error-messages.
  */
 public class ErrorController {
 
-  @FXML
-  private Text errorMessage;
-
-  @FXML
-  private Button okButton;
+  @FXML private Text errorMessage;
+  @FXML private Button okButton;
 
   /**
    * Displays an error-message with custom text.
@@ -28,6 +23,9 @@ public class ErrorController {
     errorMessage.setText(message);
   }
 
+  /**
+   * Closes error prompt when OK button is clicked.
+   */
   @FXML
   private void handleOkButton() {
     ((Stage) okButton.getScene().getWindow()).close();

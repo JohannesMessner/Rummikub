@@ -1,76 +1,51 @@
 package view;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import view.music.Audio;
+
+import java.util.List;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.text.Text;
 
 /**
  * Controller responsible for the waiting-scene that appears after joining a game.
  */
-public class WaitController implements Initializable {
+public class WaitController {
 
   private MainController mainController;
 
-  @FXML
-  private Text waitingState;
+  @FXML private Text ipAddress;
+  @FXML private Text player0;
+  @FXML private Text player1;
+  @FXML private Text player2;
+  @FXML private Text player3;
+  @FXML private Button notMuteButton;
+  @FXML private Button muteButton;
 
-  @FXML
-  private Text ipAddress;
-
-  @FXML
-  private Button startGameButton;
-
-  @FXML
-  private Text player0;
-
-  @FXML
-  private Text player1;
-
-  @FXML
-  private Text player2;
-
-  @FXML
-  private Text player3;
-
-  @FXML
-  private Button notMuteButton;
-
-  @FXML
-  private Button muteButton;
-
-  @FXML
-  private HBox ipArea;
-
-  private Stage stage;
-
+  /**
+   * Sends start request when start game button is clicked.
+   */
   @FXML
   private void startGame() {
     mainController.sendStartRequest();
   }
 
+  /**
+   * Sets instanced MainController.
+   * @param mainController MainController to set
+   */
   void setMainController(MainController mainController) {
     this.mainController = mainController;
   }
 
-  Stage getStage() {
-    return stage;
-  }
-
+  /**
+   * Set and display the names depending on amount of joined players.
+   *
+   * @param names List of player names which joined
+   */
   void setPlayerNames(List<String> names) {
     System.out.println("From WaitCtrl.: setting names.. " + names);
 
-    /*
-    * Switch distinguishing cases based on the number of players
-    * that have already joined the game.
-    */
     switch (names.size()) {
       case 4:
         player0.setText(names.get(0));
@@ -96,16 +71,13 @@ public class WaitController implements Initializable {
         player2.setText(ViewConstants.NO_PLAYER_SYMBOL);
         player3.setText(ViewConstants.NO_PLAYER_SYMBOL);
         break;
-      default:
-        break;
     }
   }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-  }
 
-
+  /**
+   * Disable sound when mute button is clicked.
+   */
   @FXML
   private void mute() {
     Audio.muteSoundOfWait();
@@ -113,6 +85,9 @@ public class WaitController implements Initializable {
     notMuteButton.setVisible(true);
   }
 
+  /**
+   * Re-activate sound when unmute button is clicked.
+   */
   @FXML
   private void unMute() {
     Audio.playMusicNow();
@@ -120,18 +95,21 @@ public class WaitController implements Initializable {
     muteButton.setVisible(true);
   }
 
+  /**
+   * Lets user quit the waiting view when quit button is pressed.
+   */
   @FXML
   private void quitWaiting() {
     System.out.println("From QUIT in WaitCtrl.: disconnect client!");
     mainController.handleQuitPressed();
   }
 
+  /**
+   * Sets and displays the server IP.
+   *
+   * @param serverIP IP to be displayed in waiting view
+   */
   void setServerIP(String serverIP) {
     ipAddress.setText(serverIP);
-  }
-
-  @FXML
-  private void showHelpScene() {
-    mainController.showHelpScene();
   }
 }

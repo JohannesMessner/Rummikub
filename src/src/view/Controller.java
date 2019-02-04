@@ -56,11 +56,6 @@ public interface Controller {
   void notifyCurrentPlayer(int playerID);
 
   /**
-   * Notifies the controller that his last move was invalid.
-   */
-  void notifyInvalidMove();
-
-  /**
    * Updates the number of Stones present in the drawing-bag.
    *
    * @param bagSize number of stones in the bag

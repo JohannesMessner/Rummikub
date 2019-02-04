@@ -1,10 +1,8 @@
 package game;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -50,7 +48,7 @@ public class RummiGame implements Game {
   private void giveStoneToPlayer(int playerID) throws UnsupportedOperationException {
     Player player = players.get(playerID);
 
-    if (isGameOn == false) {
+    if (!isGameOn) {
       throw new UnsupportedOperationException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
     }
 
@@ -68,7 +66,7 @@ public class RummiGame implements Game {
    * Updates the currentPlayerID.
    */
   private void nextTurn() throws UnsupportedOperationException {
-    if (isGameOn == false) {
+    if (!isGameOn) {
       throw new UnsupportedOperationException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
     }
 

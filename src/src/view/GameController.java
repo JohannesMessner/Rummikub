@@ -1,16 +1,11 @@
 package view;
 
 import static game.Stone.Color.JOKER;
-
 import communication.gameinfo.StoneInfo;
-
-import java.util.*;
+import view.music.Audio;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,10 +15,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.Parent;
 import javafx.scene.shape.Circle;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.text.Text;
-import view.music.Audio;
+import java.util.*;
 
 /**
  * Controller responsible for the display of the game-view.
@@ -32,50 +30,27 @@ import view.music.Audio;
 public class GameController {
 
   private static DataFormat stoneFormat = new DataFormat(ViewConstants.STONE_FORMAT);
-
-  private boolean isMyTurn = false;
-
-  @FXML
-  private HBox opponentRight;
-  @FXML
-  private HBox opponentMid;
-  @FXML
-  private HBox opponentLeft;
-  @FXML
-  private Text ownName;
-  @FXML
-  private Text ownHand;
-  @FXML
-  private Text leftPlayerName;
-  @FXML
-  private Text midPlayerName;
-  @FXML
-  private Text rightPlayerName;
-  @FXML
-  private Text leftPlayerHand;
-  @FXML
-  private Text midPlayerHand;
-  @FXML
-  private Text rightPlayerHand;
-  @FXML
-  private Text timer;
-  @FXML
-  private GridPane tableGrid;
-  @FXML
-  private GridPane handGrid;
-  @FXML
-  private VBox ownBoard;
-  @FXML
-  private Button drawButton;
-
   private MainController mainController;
-  // TIMER
   private Timer timer_countDown;
   private TimerTask timer_task;
   private boolean myTurn;
-
-  // Ctrl + Drag and Drop
   private boolean isMultiMove;
+
+  @FXML private Button drawButton;
+  @FXML private GridPane tableGrid;
+  @FXML private GridPane handGrid;
+  @FXML private HBox opponentRight;
+  @FXML private HBox opponentMid;
+  @FXML private HBox opponentLeft;
+  @FXML private Text leftPlayerHand;
+  @FXML private Text leftPlayerName;
+  @FXML private Text midPlayerHand;
+  @FXML private Text midPlayerName;
+  @FXML private Text ownHand;
+  @FXML private Text rightPlayerHand;
+  @FXML private Text rightPlayerName;
+  @FXML private Text timer;
+  @FXML private VBox ownBoard;
 
   /**
    * Connects the GameController to a MainController.
@@ -86,31 +61,34 @@ public class GameController {
     this.mainController = mainController;
   }
 
+  /**
+   * Starts the timer after player were notified.
+   */
   private void setTimer() {
     int delay = 1000;
     int period = 1000;
     timer_countDown = new Timer();
     timer_countDown.scheduleAtFixedRate(
-            timer_task = new TimerTask() {
-              int remainingTime = 60;
+      timer_task = new TimerTask() {
+        int remainingTime = 60;
 
-              public void run() {
-                if (remainingTime == 0) {
+        public void run() {
+          if (remainingTime == 0) {
 
-                  if (isMyTurn) {
-                    stopTimer();
-                    sendTimeOutRequest();
-                    return;
-                  }
-                  stopTimer();
-                  return;
-                }
-                timer.setText(Integer.toString(remainingTime));
-                remainingTime--;
-              }
-            },
-            delay,
-            period);
+            if (myTurn) {
+              stopTimer();
+              sendTimeOutRequest();
+              return;
+            }
+            stopTimer();
+            return;
+          }
+          timer.setText(Integer.toString(remainingTime));
+          remainingTime--;
+        }
+      },
+      delay,
+      period);
   }
 
   /**
@@ -133,11 +111,10 @@ public class GameController {
    * Signals that the player can now play.
    */
   void yourTurn() {
-    myTurn = true;
     Platform.runLater(() -> {
       ownBoard.setStyle(ViewConstants.CURRENTLY_PLAYING_STYLE);
     });
-    isMyTurn = true;
+    myTurn = true;
   }
 
   /**
@@ -148,7 +125,6 @@ public class GameController {
       ownBoard.setStyle(ViewConstants.NOT_CURRENTLY_PLAYING_STYLE);
     });
     myTurn = false;
-    isMyTurn = false;
   }
 
   /**
@@ -237,6 +213,11 @@ public class GameController {
     cell.setOnDragDropped(dropEvent -> setupDrop(cell, dropEvent));
   }
 
+  /**
+   * Sets up cell for start of drag and drop event.
+   * @param cell          Pane where the drag and drop is starting from
+   * @param dragDetected  Event which starts the drag
+   */
   private void setupDragDetected(Pane cell, MouseEvent dragDetected) {
     if (!cell.getChildren().isEmpty()) {
       Audio.playSoundOf(Audio.Sound.PICK_UP_STONE);
@@ -246,7 +227,7 @@ public class GameController {
       if (dragDetected.isControlDown()) {
         isMultiMove = true;
         dragGraphic = new Image(getClass().getResource(ViewConstants.MULTIPLE_STONES_IMAGE).toString());
-        System.out.println("----------------------------control pushed"); // TODO: Remove
+        System.out.println("----------------------------control pushed");
       } else {
         // Create drag view without cell styling
         SnapshotParameters snapshotParameters = new SnapshotParameters();
@@ -266,6 +247,15 @@ public class GameController {
     dragDetected.consume();
   }
 
+  /**
+   * Set up cell to accept dropping under following conditions.
+   * - Drag source is in this game.
+   * - Drag content is a StoneInfo.
+   * - Drag and drop is not from table to hand.
+   *
+   * @param cell      Pane which accepts drop under listed conditions
+   * @param dragOver  Event triggered by hovering over a cell
+   */
   private void setupDragOver(Pane cell, DragEvent dragOver) {
     if (dragOver.getDragboard().hasContent(stoneFormat)) {
       Object sourceCell = dragOver.getGestureSource();
@@ -281,6 +271,11 @@ public class GameController {
     dragOver.consume();
   }
 
+  /**
+   * Set up cell to trigger source/target specific move request after drop.
+   * @param cell      Pane in which the stone is dropped
+   * @param dropEvent Event triggered by dropping the stone
+   */
   private void setupDrop(Pane cell, DragEvent dropEvent) {
     // Get cell coordinates
     int thisColumn = GridPane.getColumnIndex(cell);
@@ -309,7 +304,7 @@ public class GameController {
         }
       }
     } else {
-      System.out.println("control pressed is: ------- " + isMultiMove); //TODO: Remove
+      System.out.println("control pressed is: ------- " + isMultiMove);
       if (isMultiMove) {
         mainController.sendMoveSetOnTableRequest(sourceColumn, sourceRow, thisColumn, thisRow);
       } else {
@@ -367,10 +362,6 @@ public class GameController {
    */
   void setPlayerHand(StoneInfo[][] hand) {
     constructGrid(hand, handGrid);
-  }
-
-  void notifyInvalidMove() {
-    //TODO: What's this?
   }
 
   /**
@@ -453,9 +444,7 @@ public class GameController {
     }
     endOfYourTurn();
     setTimer();
-    HBox[] opponents = new HBox[]{
-            opponentLeft, opponentMid, opponentRight
-    };
+    HBox[] opponents = new HBox[]{opponentLeft, opponentMid, opponentRight};
 
     int opponentID = toOpponentID(relativeOpponentPosition, opponents);
 
@@ -542,6 +531,9 @@ public class GameController {
     return opponentID;
   }
 
+  /**
+   * Function triggered when a user's timer ran down.
+   */
   private void sendTimeOutRequest() {
     mainController.sendTimeOutRequest();
     System.out.println("--------------------------TIME_OUT");
@@ -549,31 +541,49 @@ public class GameController {
   }
 
 
+  /**
+   * Function triggered when Undo: All steps button is clicked.
+   */
   @FXML
   private void sendResetRequest() {
     mainController.sendResetRequest();
   }
 
+  /**
+   * Function triggered when confirm button is clicked.
+   */
   @FXML
   private void sendConfirmMoveRequest() {
     mainController.sendConfirmMoveRequest();
   }
 
+  /**
+   * Function triggered when Sort: Group button is clicked.
+   */
   @FXML
   private void sendSortHandByGroupRequest() {
     mainController.sendSortHandByGroupRequest();
   }
 
+  /**
+   * Function triggered when Sort: Run button is clicked.
+   */
   @FXML
   private void sendSortHandByRunRequest() {
     mainController.sendSortHandByRunRequest();
   }
 
+  /**
+   * Function triggered when help button is clicked.
+   */
   @FXML
   private void showHelpScene() {
     mainController.showHelpScene();
   }
 
+  /**
+   * Function triggered when Undo: last step button is clicked.
+   */
   @FXML
   private void sendUndoRequest() {
     mainController.sendUndoRequest();
