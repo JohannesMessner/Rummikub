@@ -1,9 +1,11 @@
-package view;
+package view.login;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import view.MainController;
+import view.ViewConstants;
 
 /**
  * Class acting as the controller before a game has been started.
@@ -37,7 +39,7 @@ public class StartController {
    * Connects the StartController to a MainController.
    * @param mainController to be connected to
    */
-  void setMainController(MainController mainController) {
+  public void setMainController(MainController mainController) {
     this.mainController = mainController;
   }
 
@@ -99,7 +101,7 @@ public class StartController {
   /**
    * Shows an error-message indicating that no server is available.
    */
-  void showNoServerError() {
+  public void showNoServerError() {
     setError(ErrorType.IP);
   }
 

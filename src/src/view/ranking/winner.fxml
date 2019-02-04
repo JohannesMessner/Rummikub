@@ -9,8 +9,8 @@
 <StackPane fx:id="root"
            xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="view.WinnerController"
-           stylesheets="@/view/styling/style.css, @/view/styling/winnerStyle.css">
+           fx:controller="view.ranking.WinnerController"
+           stylesheets="@/view/style.css, @/view/ranking/winnerStyle.css">
 
   <!-- Content in center -->
   <StackPane fx:id="vContainer">

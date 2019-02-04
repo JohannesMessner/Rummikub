@@ -18,7 +18,15 @@ import network.client.GameInfoHandler;
 import network.client.RequestBuilder;
 import network.client.RummiClient;
 import network.server.RummiServer;
+import sun.security.pkcs11.P11Util;
+import view.error.ErrorController;
+import view.game.GameController;
+import view.lobby.WaitController;
+import view.login.StartController;
 import view.music.Audio;
+import view.ranking.WinnerController;
+
+import javax.swing.plaf.PanelUI;
 
 /**
  * Main controller for Rummikub.
@@ -104,7 +112,7 @@ public class MainController implements Controller {
    *
    * @throws IOException if scene cant' be loaded
    */
-  void switchToWaitScene() throws IOException {
+  public void switchToWaitScene() throws IOException {
     switchScene(ViewConstants.WAIT_FXML);
     waitController.setServerIP(serverIP);
   }
@@ -208,7 +216,7 @@ public class MainController implements Controller {
   /**
    * Displays the game instruction
    */
-  void showHelpScene() {
+  public void showHelpScene() {
     Platform.runLater(() -> {
       Stage stage = new Stage();
       Parent root;
@@ -325,14 +333,14 @@ public class MainController implements Controller {
   /**
    * Sends a request to draw a stone from the bag to the server.
    */
-  void sendDrawRequest() {
+  public void sendDrawRequest() {
     requestBuilder.sendDrawRequest();
   }
 
   /**
    * Informs the server that the game-clock has run out of time.
    */
-  void sendTimeOutRequest() {
+  public void sendTimeOutRequest() {
     requestBuilder.sendTimeOutRequest();
   }
 
@@ -347,7 +355,7 @@ public class MainController implements Controller {
    * @param targetColumn
    * @param targetRow
    */
-  void sendMoveSetOnTableRequest(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
+  public void sendMoveSetOnTableRequest(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
     client.sendRequest(new ConcreteMove(RequestID.TABLE_SET_MOVE, sourceColumn, sourceRow, targetColumn, targetRow));
   }
 
@@ -359,7 +367,7 @@ public class MainController implements Controller {
    * @param name of the player
    * @param age of the player
    */
-  void initPlayer(String serverIP, String name, int age) {
+  public void initPlayer(String serverIP, String name, int age) {
     try {
       client = new RummiClient(serverIP);
       client.setGameInfoHandler(new GameInfoHandler(this));
@@ -385,7 +393,7 @@ public class MainController implements Controller {
   /**
    * Starts the server.
    */
-  boolean startServer() {
+  public boolean startServer() {
     try {
       new RummiServer().start();
     } catch (IOException e) {
@@ -404,7 +412,7 @@ public class MainController implements Controller {
   /**
    * Sends request to start the game to the server.
    */
-  void sendStartRequest() {
+  public void sendStartRequest() {
     requestBuilder.sendStartRequest();
   }
 
@@ -418,7 +426,7 @@ public class MainController implements Controller {
    * @param targetColumn the column of the target Coordinate
    * @param targetRow the row of the target Coordinate
    */
-  void sendMoveStoneOnHand(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
+  public void sendMoveStoneOnHand(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
     requestBuilder.moveStoneOnHand(sourceColumn, sourceRow, targetColumn, targetRow);
   }
 
@@ -432,7 +440,7 @@ public class MainController implements Controller {
    * @param targetColumn the column of the target Coordinate
    * @param targetRow the row of the target Coordinate
    */
-  void sendPutStoneRequest(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
+  public void sendPutStoneRequest(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
     requestBuilder.sendPutStoneRequest(sourceColumn, sourceRow, targetColumn, targetRow);
   }
 
@@ -446,7 +454,7 @@ public class MainController implements Controller {
    * @param targetColumn the column of the target Coordinate
    * @param targetRow the row of the target Coordinate
    */
-  void sendMoveStoneOnTable(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
+  public void sendMoveStoneOnTable(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
     requestBuilder.sendMoveStoneOnTable(sourceColumn, sourceRow, targetColumn, targetRow);
   }
 
@@ -460,7 +468,7 @@ public class MainController implements Controller {
    * @param targetColumn the column of the target Coordinate
    * @param targetRow the row of the target Coordinate
    */
-  void sendMoveSetOnHand(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
+  public void sendMoveSetOnHand(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
     requestBuilder.sendMoveSetOnHand(sourceColumn, sourceRow, targetColumn, targetRow);
   }
 
@@ -474,32 +482,32 @@ public class MainController implements Controller {
    * @param targetColumn the column of the target Coordinate
    * @param targetRow the row of the target Coordinate
    */
-  void sendPutSetRequest(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
+  public void sendPutSetRequest(int sourceColumn, int sourceRow, int targetColumn, int targetRow) {
     requestBuilder.sendPutSetRequest(sourceColumn, sourceRow, targetColumn, targetRow);
   }
 
   /**
    * Sends a Request that a User wants to check the validity of their move.
    */
-  void sendConfirmMoveRequest() {
+  public void sendConfirmMoveRequest() {
     requestBuilder.sendConfirmMoveRequest();
   }
 
   /**
    * Sends
    */
-  void sendSortHandByGroupRequest() {
+  public void sendSortHandByGroupRequest() {
     requestBuilder.sendSortHandByGroupRequest();
   }
 
-  void sendSortHandByRunRequest() {
+  public void sendSortHandByRunRequest() {
     requestBuilder.sendSortHandByRunRequest();
   }
 
   /**
    * Quits the game and goes back to the start-view.
    */
-  void handleQuitPressed() {
+  public void handleQuitPressed() {
     killThreads();
     try {
       switchToStartScene();
@@ -519,11 +527,11 @@ public class MainController implements Controller {
     client = null;
   }
 
-  void sendResetRequest() {
+  public void sendResetRequest() {
     requestBuilder.sendResetRequest();
   }
 
-  void sendUndoRequest() {
+  public void sendUndoRequest() {
     requestBuilder.sendUndoRequest();
   }
 }

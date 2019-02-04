@@ -11,12 +11,12 @@ public class ViewConstants {
   static final String IP_NOT_DETERMINED_ERROR = "The IP address of a host could not be determined.";
 
   //FXML-files
-  static final String START_FXML = "start.fxml";
-  static final String WAIT_FXML = "wait.fxml";
-  static final String GAME_FXML = "game.fxml";
-  static final String ERROR_FXML = "error.fxml";
-  static final String WINNER_FXML = "winner.fxml";
-  static final String HELP_FXML = "help.fxml";
+  public static final String START_FXML = "login/start.fxml";
+  public static final String WAIT_FXML = "lobby/wait.fxml";
+  public static final String GAME_FXML = "game/game.fxml";
+  public static final String ERROR_FXML = "error/error.fxml";
+  public static final String WINNER_FXML = "ranking/winner.fxml";
+  public static final String HELP_FXML = "instruction/help.fxml";
 
   //Sound-files
   public static final String START_MUSIC_MP3 = "startMusic.mp3";
@@ -26,34 +26,35 @@ public class ViewConstants {
   public static final String DRAW_STONE_MP3 = "drawStone.mp3";
 
   //Styling of text-fields
-  static final String ERROR_STYLE = "-fx-border-color: red ; -fx-border-width: 2px ;";
+  public static final String ERROR_STYLE = "-fx-border-color: red ; -fx-border-width: 2px ;";
 
   //Styling of the Player
-  static final String CURRENTLY_PLAYING_STYLE = "-fx-border-color: #3BBA8F;";
-  static final String NOT_CURRENTLY_PLAYING_STYLE = "-fx-border-color: black;";
-  static final String NO_PLAYER_SYMBOL = "?";
-  static final String CURRENTLY_PLAYING_OPPONENT_STYLE = "-fx-background-color: #3BBA8F";
-  static final String NOT_CURRENTLY_PLAYING_OPPONENT_STYLE = "-fx-background-color: black";
+  public static final String CURRENTLY_PLAYING_STYLE = "-fx-border-color: #3BBA8F;";
+  public static final String NOT_CURRENTLY_PLAYING_STYLE = "-fx-border-color: black;";
+  public static final String NO_PLAYER_SYMBOL = "?";
+  public static final String CURRENTLY_PLAYING_OPPONENT_STYLE = "-fx-background-color: #3BBA8F";
+  public static final String NOT_CURRENTLY_PLAYING_OPPONENT_STYLE = "-fx-background-color: black";
 
   //Styling of the Stones
-  static final String STONE_FORMAT = "stoneFormat";
-  static final String STONE_STYLE = "-fx-background-color: none";
-  static final String STONE_WHILE_DRAGGING_STYLE = "-fx-background-color: #FFFFFF44";
-  static final String MULTIPLE_STONES_IMAGE = "images/MultiStoneDragView.png";
-  static final String STONE_BACKGROUND_IMAGE = "images/StoneBackground.png";
+  public static final String STONE_FORMAT = "stoneFormat";
+  public static final String STONE_STYLE = "-fx-background-color: none";
+  public static final String STONE_WHILE_DRAGGING_STYLE = "-fx-background-color: #FFFFFF44";
+  public static final String MULTIPLE_STONES_IMAGE = "images/MultiStoneDragView.png";
+  public static final String STONE_BACKGROUND_IMAGE = "test/StoneBackground.png";
+
   //Joker
-  static final String JOKER_BACKGROUND_STYLE = "jokerBackground";
-  static final String JOKER_SYMBOL = "J";
+  public static final String JOKER_BACKGROUND_STYLE = "jokerBackground";
+  public static final String JOKER_SYMBOL = "J";
 
   //Cell-Styles
-  static final String CELL_STYLE = "cell";
-  static final String SHADOW_STYLE = "shadow";
-  static final String STONE_VALUE_STYLE = "stoneValue";
+  public static final String CELL_STYLE = "cell";
+  public static final String SHADOW_STYLE = "shadow";
+  public static final String STONE_VALUE_STYLE = "stoneValue";
 
   //ID's
-  static final String HAND_GRID_ID = "handGrid";
-  static final String TABLE_GRID_ID = "tableGrid";
+  public static final String HAND_GRID_ID = "handGrid";
+  public static final String TABLE_GRID_ID = "tableGrid";
 
   //Networking
-  static final String LOCAL_IP = "localhost";
+  public static final String LOCAL_IP = "localhost";
 }

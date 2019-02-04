@@ -1,4 +1,4 @@
-package view;
+package view.error;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,7 +23,7 @@ public class ErrorController {
    * @param message text of the error-message
    */
   @FXML
-  void setErrorMessage(String message) {
+  public void setErrorMessage(String message) {
     errorMessage.setText(message);
   }
 

@@ -1,4 +1,4 @@
-package view;
+package view.game;
 
 import static game.Stone.Color.JOKER;
 
@@ -26,6 +26,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import view.MainController;
+import view.ViewConstants;
 import view.music.Audio;
 
 /**
@@ -66,7 +68,7 @@ public class GameController {
    *
    * @param mainController to be connected to
    */
-  void setMainController(MainController mainController) {
+  public void setMainController(MainController mainController) {
     this.mainController = mainController;
   }
 
@@ -98,7 +100,7 @@ public class GameController {
   /**
    * Stops the game-clock.
    */
-  void stopTimer() {
+  public void stopTimer() {
     timer_task.cancel();
     timer_countDown.cancel();
   }
@@ -114,7 +116,7 @@ public class GameController {
   /**
    * Signals that the player can now play.
    */
-  void yourTurn() {
+  public void yourTurn() {
     myTurn = true;
     ownBoard.setStyle(ViewConstants.CURRENTLY_PLAYING_STYLE);
   }
@@ -325,7 +327,7 @@ public class GameController {
    *
    * @param table to be displayed.
    */
-  void setTable(StoneInfo[][] table) {
+  public void setTable(StoneInfo[][] table) {
     constructGrid(table, tableGrid);
   }
 
@@ -334,11 +336,11 @@ public class GameController {
    *
    * @param hand to be hand.
    */
-  void setPlayerHand(StoneInfo[][] hand) {
+  public void setPlayerHand(StoneInfo[][] hand) {
     constructGrid(hand, handGrid);
   }
 
-  void notifyInvalidMove() {
+  public void notifyInvalidMove() {
     //TODO: What's this?
   }
 
@@ -347,7 +349,7 @@ public class GameController {
    *
    * @param bagSize number of stones available
    */
-  void setBagSize(int bagSize) {
+  public void setBagSize(int bagSize) {
     Platform.runLater(() -> {
       String drawButtonComplementFront = "Draw (";
       String drawButtonComplementEnd = " left)";
@@ -361,7 +363,7 @@ public class GameController {
    *
    * @param sizes number of stones on the hands.
    */
-  void setHandSizes(List<Integer> sizes) {
+  public void setHandSizes(List<Integer> sizes) {
     String handComplement = " Stones";
     ownHand.setText(sizes.get(0) + handComplement);
     switch (sizes.size()) {
@@ -386,7 +388,7 @@ public class GameController {
    *
    * @param names of the opponents
    */
-  void setPlayerNames(List<String> names) {
+  public void setPlayerNames(List<String> names) {
     System.out.println("From GameCtrl.: setting names.. " + names); //TODO: Remove
     String nameComplement = ": ";
     switch (names.size()) {
@@ -416,7 +418,7 @@ public class GameController {
    * @param relativeOpponentPosition number of steps (clockwise) until you reach the opponent
    */
   @FXML
-  void notifyCurrentPlayer(int relativeOpponentPosition) {
+  public void notifyCurrentPlayer(int relativeOpponentPosition) {
     if (timer_countDown != null) {
       stopTimer();
     }

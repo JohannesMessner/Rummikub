@@ -134,7 +134,6 @@ public class RummiGameTest {
         if (testHand.get(coord2).getNumber() < number && testHand.get(coord2).getColor() == color) {
           sortedByRun = false;
         }
-
       }
     }
 

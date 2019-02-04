@@ -1,4 +1,4 @@
-package view;
+package view.lobby;
 
 import java.net.URL;
 import java.util.List;
@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import view.MainController;
+import view.ViewConstants;
 import view.music.Audio;
 
 public class WaitController implements Initializable {
@@ -56,15 +58,15 @@ public class WaitController implements Initializable {
     mainController.sendStartRequest();
   }
 
-  void setMainController(MainController mainController) {
+  public void setMainController(MainController mainController) {
     this.mainController = mainController;
   }
 
-  Stage getStage() {
+  public Stage getStage() {
     return stage;
   }
 
-  void setPlayerNames(List<String> names) {
+  public void setPlayerNames(List<String> names) {
     System.out.println("From WaitCtrl.: setting names.. " + names);
     switch (names.size()) { //TODO: Make readable
       case 4:
@@ -120,7 +122,7 @@ public class WaitController implements Initializable {
     mainController.handleQuitPressed();
   }
 
-  void setServerIP(String serverIP) {
+  public void setServerIP(String serverIP) {
     ipAddress.setText(serverIP);
   }
 

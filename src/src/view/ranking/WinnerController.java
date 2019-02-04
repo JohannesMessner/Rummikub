@@ -1,10 +1,11 @@
-package view;
+package view.ranking;
 
 import java.io.IOException;
 import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
+import view.MainController;
 
 /**
  * Controller responsible for the Winner-View.
@@ -23,7 +24,7 @@ public class WinnerController {
    *
    * @param mainController to be connected to
    */
-  void setMainController(MainController mainController) {
+  public void setMainController(MainController mainController) {
     this.mainController = mainController;
   }
 
@@ -42,7 +43,7 @@ public class WinnerController {
   /**
    * @ToDo add javadoc; I don't understand the input, so I can't addd the javadoc
    */
-  void setRank(Map<String, Integer> finalRank) {
+  public void setRank(Map<String, Integer> finalRank) {
     StringBuilder stringBuilder = new StringBuilder();
     int place = 1;
     for (Map.Entry<String, Integer> player : finalRank.entrySet()) {

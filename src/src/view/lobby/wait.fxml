@@ -9,8 +9,8 @@
 <StackPane fx:id="root"
            xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="view.WaitController"
-           stylesheets="@/view/styling/style.css, @/view/styling/waitStyle.css">
+           fx:controller="view.lobby.WaitController"
+           stylesheets="@/view/style.css, @/view/lobby/waitStyle.css">
 
   <!-- Buttons in top right corner -->
   <StackPane alignment="TOP_RIGHT" pickOnBounds="false">
