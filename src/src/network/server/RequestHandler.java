@@ -83,12 +83,8 @@ class RequestHandler {
 
         case JOIN:
           ConcreteSetPlayer setPlayer = (ConcreteSetPlayer) request;
-          try {
-            game.join(playerID, setPlayer.getName(), setPlayer.getAge());
-            server.sendToAll(new PlayerNamesInfo(game.getPlayerNames()));
-          } catch (UnsupportedOperationException e) {
-            sendErrorToPlayer(playerID, e.getMessage());
-          }
+          game.join(playerID, setPlayer.getName(), setPlayer.getAge());
+          server.sendToAll(new PlayerNamesInfo(game.getPlayerNames()));
           break;
 
         case HAND_MOVE:
@@ -154,12 +150,7 @@ class RequestHandler {
           break;
 
         case DRAW:
-          try {
-            game.draw(playerID);
-          } catch (UnsupportedOperationException e) {
-            sendErrorToPlayer(playerID, e.getMessage());
-            break;
-          }
+          game.draw(playerID);
           sendHandToPlayer(playerID);
           sendTableToAll();
           sendHandSizesToAll();
@@ -219,7 +210,8 @@ class RequestHandler {
 
         default:
       }
-    } catch (IllegalArgumentException | IllegalStateException | UnsupportedOperationException e) {
+
+    } catch (IllegalArgumentException | IllegalStateException e) {
       sendErrorToPlayer(playerID, e.getMessage());
     }
   }

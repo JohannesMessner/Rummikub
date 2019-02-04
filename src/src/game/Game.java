@@ -16,16 +16,16 @@ public interface Game {
    * @param playerID the id the new Player associated to
    * @param name     the name of the new Player
    * @param age      the age of the new Player
-   * @return true if a new Player is added in this Game
+   * @throws IllegalStateException if game is on or full
    */
-  void join(int playerID, String name, int age);
+  void join(int playerID, String name, int age) throws IllegalStateException;
 
   /**
    * Attempts to start this Game.
    *
-   * @return true if this Game has started
+   * @throws IllegalStateException if it is not yet able to start
    */
-  void start();
+  void start() throws IllegalStateException;
 
   /**
    * Moves a group of stones on the Table of this Game from the given sourcePosition
@@ -62,9 +62,10 @@ public interface Game {
    *
    * @param sourcePosition the position of a stone before moving it
    * @param targetPosition the position of the stone after moving it
-   * @return true if the subject stone is moved
+   * @throws IllegalArgumentException if a stone is already at the targetPosition
    */
-  void putStone(Coordinate sourcePosition, Coordinate targetPosition);
+  void putStone(Coordinate sourcePosition, Coordinate targetPosition)
+      throws IllegalArgumentException;
 
   /**
    * Moves a group of stones on the Hand of a Player with the given playerId
@@ -89,8 +90,10 @@ public interface Game {
 
   /**
    * Makes the current Player of this Game to draw a stone.
+   *
+   * @throws IllegalArgumentException if the playerID is not the current playerID
    */
-  void draw(int playerID);
+  void draw(int playerID) throws IllegalArgumentException;
 
   /**
    * Removes a Player with the given playerID out of this Game.
@@ -115,14 +118,6 @@ public interface Game {
    * @return true if there is a winner
    */
   boolean hasWinner();
-
-  /**
-   * Checks the consistency of all moves that had been done by
-   * the current Player in this Game.
-   *
-   * @return true if the current Player had done valid moves.
-   */
-  boolean isConsistent();
 
   /**
    * Gives all stones and their associated Coordinates on the Table of this Game.
@@ -198,20 +193,11 @@ public interface Game {
    */
   void sortPlayerHandByRun(int playerId);
 
-
   /**
    * Draws a Stone when if there are Stones available.
    * Switches to the next player if not.
    */
   void timeOut(int playerID);
-
-  /**
-   * Returns true if only if the Player with the given playerId has played their first move.
-   *
-   * @param playerId the id of the subject Player
-   * @return true if only if the Player with the given playerId has played their first move
-   */
-  boolean hasPlayerPlayedFirstMove(int playerId);
 
   /**
    * Returns true if this Game is on going.
@@ -220,6 +206,16 @@ public interface Game {
    */
   boolean isGameOn();
 
+  /**
+   * Checks the consistency of all of moves the current Player did.
+   * This Game is consistent, if the current Player has played at least a Stone from their Hand
+   * and played total 30 points of stones from Hand if it was their first turn
+   * and the Table is consistent.
+   *
+   * @throws IllegalArgumentException if the given playerID is not the currentPlayerID
+   * @throws IllegalStateException if table is not consistent,
+   *     or the moves are against the valid game
+   */
   void confirmMove(int playerID);
 
 }

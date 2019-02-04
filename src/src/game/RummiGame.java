@@ -40,31 +40,33 @@ public class RummiGame implements Game {
   /**
    * Takes a Stone from the Bag and gives it to the current Player.
    *
-   * @throws UnsupportedOperationException If the Bag is empty or the Hand is full.
+   * @throws IllegalStateException If game is not on or the Bag is empty or the Hand is full.
    */
-  private void giveStoneToPlayer(int playerID) throws UnsupportedOperationException {
+  private void giveStoneToPlayer(int playerID) throws IllegalStateException {
     Player player = players.get(playerID);
 
     if (!gameOn) {
       throw new IllegalStateException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
     }
-
     if (player.getHandSize() >= Constants.MAX_HAND_SIZE) {
-      throw new UnsupportedOperationException(ErrorMessages.HAND_IS_FULL_ERROR);
+      throw new IllegalStateException(ErrorMessages.HAND_IS_FULL_ERROR);
     }
     if (bag.size() == 0) {
       throw new IllegalStateException(ErrorMessages.BAG_IS_EMPTY_ERROR);
     }
-    player.pushStone(bag.removeStone());
 
+    player.pushStone(bag.removeStone());
   }
+
 
   /**
    * Updates the currentPlayerID.
+   *
+   * @throws IllegalStateException if game is not on
    */
-  private void nextTurn() throws UnsupportedOperationException {
+  private void nextTurn() throws IllegalStateException {
     if (!gameOn) {
-      throw new UnsupportedOperationException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
+      throw new IllegalStateException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
     }
 
     // the ID of the current player will be updated (0 follows after 3)
@@ -77,12 +79,12 @@ public class RummiGame implements Game {
    * Draws a Stone and selects the next player.
    *
    * @param playerID of the Player who wants to make this move
-   * @throws UnsupportedOperationException if the Hand is full, the bag is empty or its not the players turn.
+   * @throws IllegalArgumentException if the given playerID is not the currentPlayerID
    */
 
-  public void draw(int playerID) throws UnsupportedOperationException {
-    reset();
+  public void draw(int playerID) throws IllegalArgumentException {
     if (playerID != currentPlayerID) {
+      reset();
       throw new IllegalArgumentException(ErrorMessages.NOT_YOUR_TURN_ERROR);
     }
     giveStoneToPlayer(playerID);
@@ -95,14 +97,15 @@ public class RummiGame implements Game {
    * @param playerID the id of the player
    * @param name     the name of the player
    * @param age      the age of the player
+   * @throws IllegalStateException if game is on or full
    */
   @Override
-  public void join(int playerID, String name, int age) {
+  public void join(int playerID, String name, int age) throws IllegalStateException {
     if (gameOn) {
-      throw new UnsupportedOperationException(ErrorMessages.GAME_HAS_ALREADY_STARTED_ERROR);
+      throw new IllegalStateException(ErrorMessages.GAME_HAS_ALREADY_STARTED_ERROR);
     }
     if (players.size() >= Constants.MAX_PLAYERS) {
-      throw new UnsupportedOperationException(ErrorMessages.GAME_IS_FULL_ERROR);
+      throw new IllegalStateException(ErrorMessages.GAME_IS_FULL_ERROR);
     }
 
     players.put(playerID, new Player(name, age));
@@ -110,17 +113,20 @@ public class RummiGame implements Game {
 
   /**
    * Starts the game by handing out stones and determining the start player.
+   *
+   * @throws IllegalStateException if game has already started or
+   *     if there are lesser than one or bigger than 4 players
    */
   @Override
-  public void start() throws UnsupportedOperationException {
+  public void start() throws IllegalStateException {
     if (gameOn) {
-      throw new UnsupportedOperationException(ErrorMessages.GAME_HAS_ALREADY_STARTED_ERROR);
+      throw new IllegalStateException(ErrorMessages.GAME_HAS_ALREADY_STARTED_ERROR);
     }
     if (players.size() < Constants.MIN_PLAYERS) {
-      throw new UnsupportedOperationException(ErrorMessages.NOT_ENOUGH_PLAYERS_ERROR);
+      throw new IllegalStateException(ErrorMessages.NOT_ENOUGH_PLAYERS_ERROR);
     }
     if (players.size() >= Constants.MAX_PLAYERS) {
-      throw new UnsupportedOperationException(ErrorMessages.GAME_IS_FULL_ERROR);
+      throw new IllegalStateException(ErrorMessages.GAME_IS_FULL_ERROR);
     }
     gameOn = true;
     bag = new RummiBag();
@@ -296,16 +302,23 @@ public class RummiGame implements Game {
    */
   @Override
   public boolean putSet(Coordinate sourcePosition, Coordinate targetPosition) {
-    return moveSet(sourcePosition, targetPosition, currentPlayer().getHand(), table, this::putStone);
+    return moveSet(
+        sourcePosition, targetPosition, currentPlayer().getHand(), table, this::putStone);
   }
 
-
-  private void moveStoneToTable(Coordinate sourcePosition, Coordinate targetPosition) throws UnsupportedOperationException {
+  /**
+   * Moves a stone from the given sourcePosition on current Player's Hand
+   * to the given targetPosition on the Table.
+   *
+   * @param sourcePosition the position of the subject Stone before moving it
+   * @param targetPosition the position of the subject Stone after moving it
+   * @throws IllegalArgumentException if a stone is already at the targetPosition
+   */
+  private void moveStoneToTable(Coordinate sourcePosition, Coordinate targetPosition) throws IllegalArgumentException {
     if (table.getStones().containsKey(targetPosition)) {
-      throw new UnsupportedOperationException(ErrorMessages.SPOT_ALREADY_TAKEN_ERROR);
+      throw new IllegalArgumentException(ErrorMessages.SPOT_ALREADY_TAKEN_ERROR);
     }
-    Stone movingStone = currentPlayer().popStone(sourcePosition);
-    table.setStone(targetPosition, movingStone);
+    table.setStone(targetPosition, currentPlayer().popStone(sourcePosition));
   }
 
   /**
@@ -314,13 +327,11 @@ public class RummiGame implements Game {
    *
    * @param sourcePosition the position of the subject stone before putting
    * @param targetPosition the position of the subject stone after putting
+   * @throws IllegalArgumentException if a stone is already at the targetPosition
    */
   @Override
-  public void putStone(Coordinate sourcePosition, Coordinate targetPosition) throws UnsupportedOperationException {
-    // check if target position is empty
-
+  public void putStone(Coordinate sourcePosition, Coordinate targetPosition) throws IllegalArgumentException {
     moveStoneToTable(sourcePosition, targetPosition);
-
     trace.push(new Trace(TraceMove.MOVE_STONE_FROM_HAND, sourcePosition, targetPosition));
   }
 
@@ -362,7 +373,7 @@ public class RummiGame implements Game {
    * @param playerID the ID of the player who left
    */
   @Override
-  public void removePlayer(int playerID) throws UnsupportedOperationException {
+  public void removePlayer(int playerID) {
     System.out.println("---number of players: " + players.size());
     if (!gameOn) {
       players.remove(playerID);
@@ -407,7 +418,7 @@ public class RummiGame implements Game {
       case MOVE_STONE_ON_TABLE:
         // swap back stones on the table
         swapStoneOnTable(targetPosition, sourcePosition);
-        return;
+        break;
       case MOVE_STONE_FROM_HAND:
         // get back stone from the table to the player hand
         Stone stone = table.removeStone(targetPosition);
@@ -430,20 +441,25 @@ public class RummiGame implements Game {
    * This Game is consistent, if the current Player has played at least a Stone from their Hand
    * and played total 30 points of stones from Hand if it was their first turn
    * and the Table is consistent.
+   *
+   * @throws IllegalArgumentException if the given playerID is not the currentPlayerID
+   * @throws IllegalStateException if table is not consistent, or the player has'nt played anything
+   *     or the player played lesser than 30 points in their first move
    */
-  public void confirmMove(int playerID) {
+  public void confirmMove(int playerID) throws IllegalArgumentException, IllegalStateException {
     if (playerID != currentPlayerID) {
-      throw new UnsupportedOperationException(ErrorMessages.NOT_YOUR_TURN_ERROR);
+      throw new IllegalArgumentException(ErrorMessages.NOT_YOUR_TURN_ERROR);
     }
     if (!table.isConsistent()) {
-      throw new UnsupportedOperationException(ErrorMessages.TABLE_NOT_CONSISTENT_ERROR);
+      throw new IllegalStateException(ErrorMessages.TABLE_NOT_CONSISTENT_ERROR);
     }
     int pointsPlayed = table.getPoints() - tablePoints;
     if (pointsPlayed == 0) {
-      throw new UnsupportedOperationException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
+      throw new IllegalStateException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
     }
+    // check if the the player has'nt played their first move yet and playedPoints was not enough
     if (!currentPlayer().hasPlayedFirstMove() && pointsPlayed < Constants.MIN_FIRST_MOVE_POINTS) {
-      throw new UnsupportedOperationException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
+      throw new IllegalStateException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
     }
 
     tablePoints += pointsPlayed;
@@ -454,12 +470,6 @@ public class RummiGame implements Game {
       nextTurn();
       trace.clear();
     }
-  }
-
-
-  @Override
-  public boolean isConsistent() {
-    return table.isConsistent();
   }
 
   @Override
@@ -505,11 +515,6 @@ public class RummiGame implements Game {
   @Override
   public void sortPlayerHandByRun(int playerID) {
     players.get(playerID).sortHandByRun();
-  }
-
-  @Override
-  public boolean hasPlayerPlayedFirstMove(int playerID) {
-    return players.get(playerID).hasPlayedFirstMove();
   }
 
   @Override
@@ -579,7 +584,7 @@ public class RummiGame implements Game {
     try {
       reset();
       draw(playerID);
-    } catch (UnsupportedOperationException e) {
+    } catch (IllegalStateException e) {
       nextTurn();
     }
   }

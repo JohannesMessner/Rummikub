@@ -75,7 +75,6 @@ public class StartController {
   private void hostGame() {
     clearErrors();
     if (isValidInput()) {
-      ipField.setText(ViewConstants.LOCAL_IP);
       if (mainController.startServer()) {
         joinGame();
       }

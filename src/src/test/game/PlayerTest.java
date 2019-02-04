@@ -13,7 +13,7 @@ public class PlayerTest {
     assertEquals(player1.getAge(), 23);
     assertEquals(player1.getName(),  "Hyunsung");
     assertEquals(player1.getHandHeight(),  3);
-    assertEquals(player1.getHandWidth(),  18);
+    assertEquals(player1.getHandWidth(),  20);
 
     player1.pushStone(new Stone(Stone.Color.RED, 1));
     player1.pushStone(new Stone(Stone.Color.YELLOW, 2));

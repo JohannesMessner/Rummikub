@@ -27,7 +27,7 @@ public class RummiGameTest {
     assertEquals(game1.getTableHeight(), 8);
     assertEquals(game1.getTableWidth(), 26);
     assertEquals(game1.getPlayerHandHeight(1), 3);
-    assertEquals(game1.getPlayerHandWidth(1), 18);
+    assertEquals(game1.getPlayerHandWidth(1), 20);
 
     game1.putStone(new Coordinate(0, 0), new Coordinate(0, 0));
     game1.putStone(new Coordinate(1, 0), new Coordinate(1, 0));
@@ -70,16 +70,13 @@ public class RummiGameTest {
     game2.getTableStones().put(new Coordinate(5, 0), new Stone(Stone.Color.BLACK, 6));
     game2.getTableStones().put(new Coordinate(6, 0), new Stone(Stone.Color.BLACK, 7));
     game2.getTableStones().put(new Coordinate(7, 0), new Stone(Stone.Color.BLACK, 8));
-
-
-    assertTrue(game2.isConsistent());
+    game2.confirmMove(1);
 
     game2.getTableStones().put(new Coordinate(0, 1), new Stone(Stone.Color.BLACK, 7));
     game2.getTableStones().put(new Coordinate(1, 1), new Stone(Stone.Color.BLACK, 2));
     game2.getTableStones().put(new Coordinate(2, 1), new Stone(Stone.Color.BLACK, 3));
     game2.getTableStones().put(new Coordinate(3, 1), new Stone(Stone.Color.BLACK, 4));
-
-    assertFalse(game2.isConsistent());
+    assertThrows(IllegalStateException.class, () -> game2.confirmMove(0));
   }
 
   @Test

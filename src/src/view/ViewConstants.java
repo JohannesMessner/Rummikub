@@ -56,7 +56,4 @@ public class ViewConstants {
   //ID's
   static final String HAND_GRID_ID = "handGrid";
   static final String TABLE_GRID_ID = "tableGrid";
-
-  //Networking
-  static final String LOCAL_IP = "localhost";
 }
