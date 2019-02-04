@@ -1,19 +1,16 @@
 package game;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.*;
+import globalconstants.Constants;
+import globalconstants.ErrorMessages;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
-
-import globalconstants.Constants;
-import globalconstants.ErrorMessages;
 
 /**
  * Model for the board game Rummikub.
@@ -68,7 +65,7 @@ public class RummiGame implements Game {
    * Updates the currentPlayerID.
    */
   private void nextTurn() throws UnsupportedOperationException {
-    if (isGameOn == false) {
+    if (!isGameOn) {
       throw new UnsupportedOperationException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
     }
 
@@ -104,7 +101,6 @@ public class RummiGame implements Game {
    * @param playerID the id of the player
    * @param name     the name of the player
    * @param age      the age of the player
-   * @return false if only if there are already 4 players or the game is on
    */
   @Override
   public void join(int playerID, String name, int age) {
@@ -120,8 +116,6 @@ public class RummiGame implements Game {
 
   /**
    * Starts the game by handing out stones and determining the start player.
-   *
-   * @return false if only if this game has already started
    */
   @Override
   public void start() throws UnsupportedOperationException {
@@ -390,7 +384,7 @@ public class RummiGame implements Game {
   @Override
   public void removePlayer(int playerID) throws UnsupportedOperationException {
     System.out.println("---number of players: " + players.size());
-    if (isGameOn == false) {
+    if (!isGameOn) {
       players.remove(playerID);
       return;
     }
@@ -492,7 +486,7 @@ public class RummiGame implements Game {
     if (!currentPlayer().hasPlayedFirstMove() && pointsPlayed < Constants.MIN_FIRST_MOVE_POINTS) {
       throw new UnsupportedOperationException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
     }
-    if (table.isConsistent() == false) {
+    if (!table.isConsistent()) {
       throw new UnsupportedOperationException(ErrorMessages.TABLE_NOT_CONSISTENT_ERROR);
     }
     currentPlayer().setPlayedFirstMove(true);
