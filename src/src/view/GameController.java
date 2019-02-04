@@ -14,10 +14,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -116,7 +113,9 @@ public class GameController {
    */
   void yourTurn() {
     myTurn = true;
-    ownBoard.setStyle(ViewConstants.CURRENTLY_PLAYING_STYLE);
+    Platform.runLater(() -> {
+      ownBoard.setStyle(ViewConstants.CURRENTLY_PLAYING_STYLE);
+    });
   }
 
   /**
@@ -124,7 +123,9 @@ public class GameController {
    */
   private void endOfYourTurn() {
     myTurn = false;
-    ownBoard.setStyle(ViewConstants.NOT_CURRENTLY_PLAYING_STYLE);
+    Platform.runLater(() -> {
+      ownBoard.setStyle(ViewConstants.NOT_CURRENTLY_PLAYING_STYLE);
+    });
   }
 
   /**
@@ -193,100 +194,107 @@ public class GameController {
    * @param cell Pane where the event shall be registered
    */
   private void setupDragAndDrop(Pane cell) {
-    // Get cell coordinates
-    int thisColumn = GridPane.getColumnIndex(cell);
-    int thisRow = GridPane.getRowIndex(cell);
-
     // Start drag and drop, copy stone to clipboard, delete stone in view
-    cell.setOnDragDetected(event -> {
-      if (!cell.getChildren().isEmpty()) {
-        Audio.playSoundOf(Audio.Sound.PICK_UP_STONE);
-
-        Dragboard dragBoard = cell.startDragAndDrop(TransferMode.ANY);
-        Image dragGraphic;
-        if (event.isControlDown()) {
-          isMultiMove = true;
-          dragGraphic = new Image(getClass().getResource(ViewConstants.MULTIPLE_STONES_IMAGE).toString());
-          System.out.println("----------------------------control pushed"); // TODO: Remove
-        } else {
-          // Create drag view without cell styling
-          SnapshotParameters snapshotParameters = new SnapshotParameters();
-          snapshotParameters.setFill(Color.TRANSPARENT);
-          cell.getStyleClass().remove(ViewConstants.CELL_STYLE);
-          dragGraphic = cell.snapshot(snapshotParameters, null);
-          cell.getStyleClass().add(ViewConstants.CELL_STYLE);
-        }
-        dragBoard.setDragView(dragGraphic, dragGraphic.getWidth() * 0.5, dragGraphic.getHeight() * 0.7);
-        ClipboardContent content = new ClipboardContent();
-
-        // Put dummy stone on clipboard
-        StoneInfo dummyStone = new StoneInfo(null, 0);
-        content.put(stoneFormat, dummyStone);
-        dragBoard.setContent(content);
-      }
-      event.consume();
-    });
+    cell.setOnDragDetected(dragDetected -> setupDragDetected(cell, dragDetected));
 
     // Enable cell to accept drop
-    cell.setOnDragOver(event -> {
-      if (event.getDragboard().hasContent(stoneFormat)) {
-        Object sourceCell = event.getGestureSource();
-        if (sourceCell instanceof StackPane) {
-          String targetParentId = cell.getParent().getId();
-          String sourceParentId = ((StackPane) sourceCell).getParent().getId();
-          if (sourceParentId.equals(ViewConstants.HAND_GRID_ID) ||
-                  (sourceParentId.equals(ViewConstants.TABLE_GRID_ID) && !(targetParentId.equals(ViewConstants.HAND_GRID_ID)))) {
-            event.acceptTransferModes(TransferMode.ANY);
-          }
-        }
-      }
-      event.consume();
-    });
+    cell.setOnDragOver(dragOver -> setupDragOver(cell, dragOver));
 
-    // TODO: In CSS if possible
-    cell.setOnDragEntered(event -> {
+    // Highlight cell on hover
+    cell.setOnDragEntered(dragEntered -> {
       cell.setStyle(ViewConstants.STONE_WHILE_DRAGGING_STYLE);
     });
 
-    cell.setOnDragExited(event -> {
+    // Disable cell highlighting on exiting hover
+    cell.setOnDragExited(dragExited -> {
       cell.setStyle(ViewConstants.STONE_STYLE);
     });
 
     // Put stone in target cell, notify server
-    cell.setOnDragDropped(event -> {
-      Audio.playSoundOf(Audio.Sound.DROP_STONE);
-      Pane sourceCell = (Pane) event.getGestureSource();
-      sourceCell.getChildren().clear();
-      int sourceColumn = GridPane.getColumnIndex(sourceCell);
-      int sourceRow = GridPane.getRowIndex(sourceCell);
+    cell.setOnDragDropped(dropEvent -> setupDrop(cell, dropEvent));
+  }
 
-      Parent sourceParent = sourceCell.getParent();
-      Parent targetParent = cell.getParent();
-      if (sourceParent.getId().equals(ViewConstants.HAND_GRID_ID)) {
-        if (targetParent.getId().equals(ViewConstants.HAND_GRID_ID)) {
-          if (isMultiMove) {
-            mainController.sendMoveSetOnHand(sourceColumn, sourceRow, thisColumn, thisRow);
-          } else {
-            mainController.sendMoveStoneOnHand(sourceColumn, sourceRow, thisColumn, thisRow);
-          }
-        } else {
-          if (isMultiMove) {
-            mainController.sendPutSetRequest(sourceColumn, sourceRow, thisColumn, thisRow);
-          } else {
-            mainController.sendPutStoneRequest(sourceColumn, sourceRow, thisColumn, thisRow);
-          }
-        }
+  private void setupDragDetected(Pane cell, MouseEvent dragDetected) {
+    if (!cell.getChildren().isEmpty()) {
+      Audio.playSoundOf(Audio.Sound.PICK_UP_STONE);
+
+      Dragboard dragBoard = cell.startDragAndDrop(TransferMode.ANY);
+      Image dragGraphic;
+      if (dragDetected.isControlDown()) {
+        isMultiMove = true;
+        dragGraphic = new Image(getClass().getResource(ViewConstants.MULTIPLE_STONES_IMAGE).toString());
+        System.out.println("----------------------------control pushed"); // TODO: Remove
       } else {
-        System.out.println("control pressed is: ------- " + isMultiMove); //TODO: Remove
-        if (isMultiMove) {
-          mainController.sendMoveSetOnTableRequest(sourceColumn, sourceRow, thisColumn, thisRow);
-        } else {
-          mainController.sendMoveStoneOnTable(sourceColumn, sourceRow, thisColumn, thisRow);
+        // Create drag view without cell styling
+        SnapshotParameters snapshotParameters = new SnapshotParameters();
+        snapshotParameters.setFill(Color.TRANSPARENT);
+        cell.getStyleClass().remove(ViewConstants.CELL_STYLE);
+        dragGraphic = cell.snapshot(snapshotParameters, null);
+        cell.getStyleClass().add(ViewConstants.CELL_STYLE);
+      }
+      dragBoard.setDragView(dragGraphic, dragGraphic.getWidth() * 0.5, dragGraphic.getHeight() * 0.7);
+      ClipboardContent content = new ClipboardContent();
+
+      // Put dummy stone on clipboard
+      StoneInfo dummyStone = new StoneInfo(null, 0);
+      content.put(stoneFormat, dummyStone);
+      dragBoard.setContent(content);
+    }
+    dragDetected.consume();
+  }
+
+  private void setupDragOver(Pane cell, DragEvent dragOver) {
+    if (dragOver.getDragboard().hasContent(stoneFormat)) {
+      Object sourceCell = dragOver.getGestureSource();
+      if (sourceCell instanceof StackPane) {
+        String targetParentId = cell.getParent().getId();
+        String sourceParentId = ((StackPane) sourceCell).getParent().getId();
+        if (sourceParentId.equals(ViewConstants.HAND_GRID_ID) ||
+                (sourceParentId.equals(ViewConstants.TABLE_GRID_ID) && !(targetParentId.equals(ViewConstants.HAND_GRID_ID)))) {
+          dragOver.acceptTransferModes(TransferMode.ANY);
         }
       }
-      isMultiMove = false;
-      event.consume();
-    });
+    }
+    dragOver.consume();
+  }
+
+  private void setupDrop(Pane cell, DragEvent dropEvent) {
+    // Get cell coordinates
+    int thisColumn = GridPane.getColumnIndex(cell);
+    int thisRow = GridPane.getRowIndex(cell);
+
+    Audio.playSoundOf(Audio.Sound.DROP_STONE);
+    Pane sourceCell = (Pane) dropEvent.getGestureSource();
+    sourceCell.getChildren().clear();
+    int sourceColumn = GridPane.getColumnIndex(sourceCell);
+    int sourceRow = GridPane.getRowIndex(sourceCell);
+
+    Parent sourceParent = sourceCell.getParent();
+    Parent targetParent = cell.getParent();
+    if (sourceParent.getId().equals(ViewConstants.HAND_GRID_ID)) {
+      if (targetParent.getId().equals(ViewConstants.HAND_GRID_ID)) {
+        if (isMultiMove) {
+          mainController.sendMoveSetOnHand(sourceColumn, sourceRow, thisColumn, thisRow);
+        } else {
+          mainController.sendMoveStoneOnHand(sourceColumn, sourceRow, thisColumn, thisRow);
+        }
+      } else {
+        if (isMultiMove) {
+          mainController.sendPutSetRequest(sourceColumn, sourceRow, thisColumn, thisRow);
+        } else {
+          mainController.sendPutStoneRequest(sourceColumn, sourceRow, thisColumn, thisRow);
+        }
+      }
+    } else {
+      System.out.println("control pressed is: ------- " + isMultiMove); //TODO: Remove
+      if (isMultiMove) {
+        mainController.sendMoveSetOnTableRequest(sourceColumn, sourceRow, thisColumn, thisRow);
+      } else {
+        mainController.sendMoveStoneOnTable(sourceColumn, sourceRow, thisColumn, thisRow);
+      }
+    }
+    isMultiMove = false;
+    dropEvent.consume();
   }
 
   /**
