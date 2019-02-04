@@ -33,21 +33,40 @@ public class GameController {
 
   private static DataFormat stoneFormat = new DataFormat(ViewConstants.STONE_FORMAT);
 
-  @FXML private HBox opponentRight;
-  @FXML private HBox opponentMid;
-  @FXML private HBox opponentLeft;
-  @FXML private Text ownHand;
-  @FXML private Text leftPlayerName;
-  @FXML private Text midPlayerName;
-  @FXML private Text rightPlayerName;
-  @FXML private Text leftPlayerHand;
-  @FXML private Text midPlayerHand;
-  @FXML private Text rightPlayerHand;
-  @FXML private Text timer;
-  @FXML private GridPane tableGrid;
-  @FXML private GridPane handGrid;
-  @FXML private VBox ownBoard;
-  @FXML private Button drawButton;
+  private boolean isMyTurn = false;
+
+  @FXML
+  private HBox opponentRight;
+  @FXML
+  private HBox opponentMid;
+  @FXML
+  private HBox opponentLeft;
+  @FXML
+  private Text ownName;
+  @FXML
+  private Text ownHand;
+  @FXML
+  private Text leftPlayerName;
+  @FXML
+  private Text midPlayerName;
+  @FXML
+  private Text rightPlayerName;
+  @FXML
+  private Text leftPlayerHand;
+  @FXML
+  private Text midPlayerHand;
+  @FXML
+  private Text rightPlayerHand;
+  @FXML
+  private Text timer;
+  @FXML
+  private GridPane tableGrid;
+  @FXML
+  private GridPane handGrid;
+  @FXML
+  private VBox ownBoard;
+  @FXML
+  private Button drawButton;
 
   private MainController mainController;
   // TIMER
@@ -67,29 +86,31 @@ public class GameController {
     this.mainController = mainController;
   }
 
-  //TODO: Clean up code
   private void setTimer() {
     int delay = 1000;
     int period = 1000;
     timer_countDown = new Timer();
     timer_countDown.scheduleAtFixedRate(
-      timer_task = new TimerTask() {
-        int remainingTime = 60;
+            timer_task = new TimerTask() {
+              int remainingTime = 60;
 
-        public void run() {
-          if (remainingTime == 0) {
-            if (myTurn) {
-              sendTimeOutRequest();
-            }
-            stopTimer();
-            return;
-          }
-          timer.setText(Integer.toString(remainingTime));
-          remainingTime--;
-        }
-      },
-      delay,
-      period);
+              public void run() {
+                if (remainingTime == 0) {
+
+                  if (isMyTurn) {
+                    stopTimer();
+                    sendTimeOutRequest();
+                    return;
+                  }
+                  stopTimer();
+                  return;
+                }
+                timer.setText(Integer.toString(remainingTime));
+                remainingTime--;
+              }
+            },
+            delay,
+            period);
   }
 
   /**
@@ -116,16 +137,18 @@ public class GameController {
     Platform.runLater(() -> {
       ownBoard.setStyle(ViewConstants.CURRENTLY_PLAYING_STYLE);
     });
+    isMyTurn = true;
   }
 
   /**
    * Signals that the player can't play anymore until it's his turn again.
    */
   private void endOfYourTurn() {
-    myTurn = false;
     Platform.runLater(() -> {
       ownBoard.setStyle(ViewConstants.NOT_CURRENTLY_PLAYING_STYLE);
     });
+    myTurn = false;
+    isMyTurn = false;
   }
 
   /**
@@ -395,11 +418,11 @@ public class GameController {
    * @param names of the opponents
    */
   void setPlayerNames(List<String> names) {
-    System.out.println("From GameCtrl.: setting names.. " + names); //TODO: Remove
+
     String nameComplement = ": ";
     switch (names.size()) {
       case 2:
-        opponentMid.setVisible(true); //TODO: Necessary?
+        opponentMid.setVisible(true);
         opponentLeft.setVisible(false);
         opponentRight.setVisible(false);
         midPlayerName.setText(names.get(1) + nameComplement);
@@ -455,7 +478,7 @@ public class GameController {
    * @param opponents possibly displayed opponents
    * @return number of currently displayed players
    */
-  private int getNumOfVisibliPlayers(HBox[] opponents) { //TODO: Rename this function
+  private int getNumOfVisiblePlayers(HBox[] opponents) {
     int numOfPlayers = 1;
     for (HBox opponent : opponents) {
       if (opponent.isVisible()) {
@@ -477,7 +500,7 @@ public class GameController {
    */
   private int toOpponentID(int relativeOpponentPosition, HBox[] opponents) {
 
-    int numOfPlayers = getNumOfVisibliPlayers(opponents);
+    int numOfPlayers = getNumOfVisiblePlayers(opponents);
     System.out.println(numOfPlayers);
 
     int opponentID;
@@ -544,14 +567,6 @@ public class GameController {
   @FXML
   private void sendSortHandByRunRequest() {
     mainController.sendSortHandByRunRequest();
-  }
-
-  public void showRank() {
-    Map<String, Integer> rank = new HashMap<>();
-    //@ToDo Magic numbers!
-    rank.put("name1", 0);
-    rank.put("name2", -30);
-    mainController.showRank(rank);
   }
 
   @FXML
