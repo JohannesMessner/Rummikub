@@ -166,8 +166,10 @@ public class RummiTable implements Grid {
     for (int i = 0; i < setSize; i++) {
       stone = stones.get(new Coordinate(col + i, row));
       color = stone.getColor();
-      // check if it's a Joker or it has expectedNumber and its color is unique
-      if (!(color == Color.JOKER || stone.getNumber() == expectedNumber && checkedColors.add(color))) {
+      if (color == Color.JOKER) {
+        stone.setNumber(expectedNumber);
+        // check if it's a Joker or it has expectedNumber and its color is unique
+      } else if (!(stone.getNumber() == expectedNumber && checkedColors.add(color))) {
         return false;
       }
     }
@@ -198,12 +200,9 @@ public class RummiTable implements Grid {
       number = stone.getNumber();
       // skip it if it's a Joker
       if (color == Color.JOKER) {
-        // count up the expectedNumber, 1 (min value) should be followed after 13 (max value)
-        expectedNumber = (++expectedNumber > Stone.MAX_VALUE) ? Stone.MIN_VALUE : expectedNumber;
-        continue;
-      }
-      // check if it's the first to be checked or its number matches the expected (previous) number
-      if (!(color == expectedColor && number == expectedNumber)) {
+        stone.setNumber(expectedNumber);
+        // check if it's the first to be checked or its number matches the expected (previous) number
+      } else if (!(color == expectedColor && number == expectedNumber)) {
         return false;
       }
       // count up the expectedNumber, 1 (min value) should be followed after 13 (max value)

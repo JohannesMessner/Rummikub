@@ -23,7 +23,7 @@ public class ViewConstants {
 
   //Sound-files
   public static final String START_MUSIC_MP3 = "startMusic.mp3";
-  public static final String WAITING_MUSIC_MP3 = "startMusic.mp3";
+  public static final String WAITING_MUSIC_MP3 = "waitingMusic.mp3";
   public static final String PICK_UP_STONE_MP3 = "pickupStone.mp3";
   public static final String DROP_STONE_MP3 = "dropStone.mp3";
   public static final String DRAW_STONE_MP3 = "drawStone.mp3";

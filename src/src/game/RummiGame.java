@@ -4,7 +4,7 @@ import globalconstants.Constants;
 import globalconstants.ErrorMessages;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,15 +18,13 @@ import java.util.stream.Collectors;
  */
 public class RummiGame implements Game {
 
-  private RummiTable table;
+  private RummiTable table; // table of the game
   private HashMap<Integer, Player> players;
-  private RummiBag bag;
-  private Stack<Trace> trace;
-  private boolean isGameOn;
-  private int currentPlayerID;
-  private int pointsBeforeTurn;
-  private int pointsAfterTurn;
-
+  private RummiBag bag; // bag where all stones are filled
+  private Stack<Trace> trace; // history of the current Player's each move
+  private boolean gameOn; // the state of game that tells if it is on going or not
+  private int currentPlayerID; // the id of the current player
+  private int tablePoints; // the points of the Table
 
   /**
    * Initializes the RummiGame for Rummikub board game.
@@ -47,7 +45,7 @@ public class RummiGame implements Game {
   private void giveStoneToPlayer(int playerID) throws UnsupportedOperationException {
     Player player = players.get(playerID);
 
-    if (isGameOn == false) {
+    if (gameOn == false) {
       throw new UnsupportedOperationException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
     }
 
@@ -65,7 +63,7 @@ public class RummiGame implements Game {
    * Updates the currentPlayerID.
    */
   private void nextTurn() throws UnsupportedOperationException {
-    if (!isGameOn) {
+    if (!gameOn) {
       throw new UnsupportedOperationException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
     }
 
@@ -73,10 +71,7 @@ public class RummiGame implements Game {
     do {
       currentPlayerID = (currentPlayerID + 1) % Constants.MAX_PLAYERS;
     } while (!players.containsKey(currentPlayerID));
-
-    pointsBeforeTurn = getCurrentPlayer().points();
     System.out.println(getCurrentPlayer().getHand());
-
   }
 
   /**
@@ -104,7 +99,7 @@ public class RummiGame implements Game {
    */
   @Override
   public void join(int playerID, String name, int age) {
-    if (isGameOn) {
+    if (gameOn) {
       throw new UnsupportedOperationException(ErrorMessages.GAME_HAS_ALREADY_STARTED_ERROR);
     }
     if (players.size() >= Constants.MAX_PLAYERS) {
@@ -119,7 +114,7 @@ public class RummiGame implements Game {
    */
   @Override
   public void start() throws UnsupportedOperationException {
-    if (isGameOn == true) {
+    if (gameOn == true) {
       throw new UnsupportedOperationException(ErrorMessages.GAME_HAS_ALREADY_STARTED_ERROR);
     }
     if (players.size() < Constants.MIN_PLAYERS) {
@@ -128,13 +123,11 @@ public class RummiGame implements Game {
     if (players.size() >= Constants.MAX_PLAYERS) {
       throw new UnsupportedOperationException(ErrorMessages.GAME_IS_FULL_ERROR);
     }
-    isGameOn = true;
+    gameOn = true;
     bag = new RummiBag();
     table.clear();
     handOutStones();
     setStartPlayer();
-
-    pointsBeforeTurn = getCurrentPlayer().points();
   }
 
   /**
@@ -181,36 +174,25 @@ public class RummiGame implements Game {
    * @param stoneMove      the container of a method to be used for moving
    * @return true if only if the set (neighbored stones) is successfully moved
    */
-  private static boolean moveSet(Coordinate sourcePosition, Coordinate targetPosition, Grid sourceGrid, Grid targetGrid, StoneMove stoneMove) {
-    Map<Coordinate, Stone> sourceStones = sourceGrid.getStones();
-    // check if there is a stone on the sourceGrid at the given sourcePosition
-    if (!sourceStones.containsKey(sourcePosition)) {
+  private static boolean moveSet(Coordinate sourcePosition, Coordinate targetPosition,
+      Grid sourceGrid, Grid targetGrid, StoneMove stoneMove) {
+    // check if there is a stone on the given sourceGrid at the given sourcePosition
+    if (!sourceGrid.getStones().containsKey(sourcePosition)) {
       return false;
     }
-    Coordinate coordinate = sourceGrid.getFirstCoordOfStonesAt(sourcePosition);
-    int srcCol = coordinate.getCol();
-    int srcRow = coordinate.getRow();
-    int trgCol = targetPosition.getCol() - (sourcePosition.getCol() - srcCol);
+    Coordinate firstCoord = sourceGrid.getFirstCoordOfStonesAt(sourcePosition);
+    int srcCol = firstCoord.getCol();
+    int srcRow = firstCoord.getRow();
+    // shift trgCol like srcCol did by getting first coordinate
+    int trgCol = targetPosition.getCol() + srcCol - sourcePosition.getCol();
     int trgRow = targetPosition.getRow();
-    HashSet<Coordinate> neighborCoordinates = new HashSet<>(); // coordinates of stones to be moved
-    // save all coordinates of neighbor stones at the sourcePosition
-    for (int i = 0; sourceStones.containsKey(coordinate); i++) {
-      neighborCoordinates.add(coordinate);
-      coordinate = new Coordinate(srcCol + i, srcRow);
-    }
-    int setSize = neighborCoordinates.size();
-    // make trgCol suitable on targetGrid
+    int setSize = sourceGrid.getNeighborStonesSize(firstCoord); // the size of a potential set
+    // make trgCol suitable on the given targetGrid
     trgCol = Math.min(Math.max(0, trgCol), targetGrid.getWidth() - setSize);
-    Map<Coordinate, Stone> targetStones = targetGrid.getStones();
-    // check if it is safe to move stones on targetGrid
-    for (int i = 0; i < setSize; i++) {
-      coordinate = new Coordinate(trgCol + i, trgRow);
-      // check if the coordinate on target grid is clear or the source- and targetGrid are the same
-      if (targetStones.containsKey(coordinate)
-              // and the coordinate is a part of neighborCoordinates of moving stones
-              && !(sourceGrid.equals(targetGrid) && neighborCoordinates.contains(coordinate))) {
-        return false;
-      }
+    // check if it is okay to move these stones
+    if (!isTargetSafe(srcCol, srcRow, trgCol, trgRow,
+        sourceGrid == targetGrid, targetGrid.getStones(), setSize)) {
+      return false;
     }
     // check if targetPosition was at the right side of the sourcePosition
     if (trgCol > srcCol) {
@@ -236,16 +218,16 @@ public class RummiGame implements Game {
    * The target is safe, if there are no stone at the target coordinates (apart from
    * the shared coordinates if source is target.
    *
-   * @param srcCol       the column of the source Coordinate used to shift the trgCol to be checked
-   * @param srcRow       the row of the source Coordinate compared with the given trgRow
-   * @param trgCol       the column of the target Coordinate to be checked
-   * @param trgRow       the row of the target Coordinate compared with the given srcRow
+   * @param srcCol the column of the source Coordinate used to shift the trgCol to be checked
+   * @param srcRow the row of the source Coordinate compared with the given trgRow
+   * @param trgCol the column of the target Coordinate to be checked
+   * @param trgRow the row of the target Coordinate compared with the given srcRow
    * @param targetStones the stones from the target
-   * @param stoneSize    the size of stones to be checked
+   * @param stoneSize the size of stones to be checked
    * @return true if only if it is safe to move stones to the target
    */
   private static boolean isTargetSafe(int srcCol, int srcRow, int trgCol, int trgRow,
-                                      boolean sourceIsTarget, Map<Coordinate, Stone> targetStones, int stoneSize) {
+      boolean sourceIsTarget, Map<Coordinate, Stone> targetStones, int stoneSize) {
     if (sourceIsTarget && srcRow == trgRow) {
       int s = Math.min(Math.abs(srcCol - trgCol), stoneSize);
       trgCol += (trgCol > srcCol) ? stoneSize - s : 0;
@@ -384,14 +366,14 @@ public class RummiGame implements Game {
   @Override
   public void removePlayer(int playerID) throws UnsupportedOperationException {
     System.out.println("---number of players: " + players.size());
-    if (!isGameOn) {
+    if (!gameOn) {
       players.remove(playerID);
       return;
     }
     // remove the player with the playerID and reset their hand into the bag
     bag.addStones(players.remove(playerID).getStones().values());
     if (players.size() < Constants.MIN_PLAYERS) {
-      isGameOn = false;
+      gameOn = false;
       return;
     }
     if (currentPlayerID == playerID) {
@@ -431,9 +413,7 @@ public class RummiGame implements Game {
       case MOVE_STONE_FROM_HAND:
         // get back stone from the table to the player hand
         Stone stone = table.removeStone(targetPosition);
-        //currentPoints -= stone.getNumber();
         currentPlayer().pushStone(stone);
-        return;
     }
   }
 
@@ -470,16 +450,15 @@ public class RummiGame implements Game {
    * and played total 30 points of stones from Hand if it was their first turn
    * and the Table is consistent.
    *
-   * @return false if only if the current player's move is first but points are lower than 30
-   * or the played table is not consistent
+   * @return true if only if this Game is consistent
    */
 
   public void confirmMove(int playerID) {
     if (playerID != currentPlayerID) {
       throw new UnsupportedOperationException(ErrorMessages.NOT_YOUR_TURN_ERROR);
     }
-    pointsAfterTurn = getCurrentPlayer().points();
-    int pointsPlayed = (pointsBeforeTurn - pointsAfterTurn);
+    int pointsPlayed = table.getPoints() - tablePoints;
+
     if (pointsPlayed == 0) {
       throw new UnsupportedOperationException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
     }
@@ -489,9 +468,10 @@ public class RummiGame implements Game {
     if (!table.isConsistent()) {
       throw new UnsupportedOperationException(ErrorMessages.TABLE_NOT_CONSISTENT_ERROR);
     }
+    tablePoints += pointsPlayed;
     currentPlayer().setPlayedFirstMove(true);
     if (hasWinner()) {
-      isGameOn = false;
+      gameOn = false;
     } else {
       nextTurn();
       trace.clear();
@@ -558,7 +538,7 @@ public class RummiGame implements Game {
 
   @Override
   public boolean isGameOn() {
-    return isGameOn;
+    return gameOn;
   }
 
   @Override
@@ -598,10 +578,10 @@ public class RummiGame implements Game {
    */
   @Override
   public Map<String, Integer> getFinalRank() {
-    Map<String, Integer> rank = new HashMap<>(players.size());
+    LinkedHashMap<String, Integer> rank = new LinkedHashMap<>(players.size());
     players.values().stream()
-            .sorted(Comparator.comparingInt(Player::getPoints).reversed())
-            .forEach((player) -> rank.put(player.getName(), player.getPoints()));
+        .sorted(Comparator.comparingInt(Player::getPoints).reversed())
+        .forEach((player) -> rank.put(player.getName(), player.getPoints()));
     return rank;
   }
 
@@ -621,7 +601,7 @@ public class RummiGame implements Game {
    */
   @Override
   public void timeOut(int playerID) {
-    if (!isGameOn) {
+    if (!gameOn) {
       return;
     }
     try {
