@@ -17,10 +17,10 @@ public class PlayerTest {
 
     player1.pushStone(new Stone(Stone.Color.RED, 1));
     player1.pushStone(new Stone(Stone.Color.YELLOW, 2));
-    player1.pushStone(new Stone(Stone.Color.JOKER, 3));
+    player1.pushStone(new Stone());
 
     //A Joker counts as 20 negative points, extra rule!
-    assertTrue(player1.points() == 13);
+    assertEquals(23, player1.points());
 
     assertTrue(player1.getStones().size() == 3);
     player1.clearHand();

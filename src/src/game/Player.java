@@ -18,8 +18,8 @@ class Player {
     playedFirstMove = false;
   }
 
-  void setPlayedFirstMove(boolean hasPlayed) {
-    this.playedFirstMove = hasPlayed;
+  void playedFirstMove() {
+    this.playedFirstMove = true;
   }
 
   public int points() {
@@ -118,7 +118,6 @@ class Player {
 
   /**
    * Returns the Hand Grid of this Player.
-   * It will be only used in this package.
    *
    * @return the Hand Grid of this Player
    */

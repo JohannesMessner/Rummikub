@@ -21,4 +21,6 @@ public class Constants {
   public static final int MAX_HAND_SIZE = HAND_HEIGHT * HAND_WIDTH;
 
   public static final int JOKER_POINTS = 20;
+
+  public static final int HOST_ID = 0;
 }

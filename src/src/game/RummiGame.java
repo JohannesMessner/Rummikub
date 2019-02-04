@@ -46,14 +46,14 @@ public class RummiGame implements Game {
     Player player = players.get(playerID);
 
     if (!gameOn) {
-      throw new UnsupportedOperationException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
+      throw new IllegalStateException(ErrorMessages.GAME_DID_NOT_START_YET_ERROR);
     }
 
     if (player.getHandSize() >= Constants.MAX_HAND_SIZE) {
       throw new UnsupportedOperationException(ErrorMessages.HAND_IS_FULL_ERROR);
     }
-    if (bag.size() < 1) {
-      throw new UnsupportedOperationException(ErrorMessages.BAG_IS_EMPTY_ERROR);
+    if (bag.size() == 0) {
+      throw new IllegalStateException(ErrorMessages.BAG_IS_EMPTY_ERROR);
     }
     player.pushStone(bag.removeStone());
 
@@ -71,7 +71,6 @@ public class RummiGame implements Game {
     do {
       currentPlayerID = (currentPlayerID + 1) % Constants.MAX_PLAYERS;
     } while (!players.containsKey(currentPlayerID));
-    System.out.println(getCurrentPlayer().getHand());
   }
 
   /**
@@ -84,7 +83,7 @@ public class RummiGame implements Game {
   public void draw(int playerID) throws UnsupportedOperationException {
     reset();
     if (playerID != currentPlayerID) {
-      throw new UnsupportedOperationException(ErrorMessages.NOT_YOUR_TURN_ERROR);
+      throw new IllegalArgumentException(ErrorMessages.NOT_YOUR_TURN_ERROR);
     }
     giveStoneToPlayer(playerID);
     nextTurn();
@@ -431,10 +430,7 @@ public class RummiGame implements Game {
    * This Game is consistent, if the current Player has played at least a Stone from their Hand
    * and played total 30 points of stones from Hand if it was their first turn
    * and the Table is consistent.
-   *
-   * @return true if only if this Game is consistent
    */
-
   public void confirmMove(int playerID) {
     if (playerID != currentPlayerID) {
       throw new UnsupportedOperationException(ErrorMessages.NOT_YOUR_TURN_ERROR);
@@ -451,7 +447,7 @@ public class RummiGame implements Game {
     }
 
     tablePoints += pointsPlayed;
-    currentPlayer().setPlayedFirstMove(true);
+    currentPlayer().playedFirstMove();
     if (hasWinner()) {
       gameOn = false;
     } else {
@@ -571,10 +567,6 @@ public class RummiGame implements Game {
     return trace;
   }
 
-  public Player getCurrentPlayer() {
-    return players.get(currentPlayerID);
-  }
-
   /**
    * Draws a Stone when if there are Stones available.
    * Switches to the next player if not.
@@ -596,6 +588,11 @@ public class RummiGame implements Game {
    * Gives a current player.
    */
   private Player currentPlayer() {
+    return players.get(currentPlayerID);
+  }
+
+  /** This method is for testing.*/
+  Player getCurrentPlayer() {
     return players.get(currentPlayerID);
   }
 }

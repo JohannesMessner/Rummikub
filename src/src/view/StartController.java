@@ -120,8 +120,8 @@ public class StartController {
     String userName = nameField.getText();
     boolean isValidInput = true;
 
-    // Test name input
-    if (userName.isEmpty() || userName.length() > 20) {
+    // Test if name is not only spaces and length is 20
+    if (userName.trim().isEmpty() || userName.length() > 20) {
       setError(ErrorType.NAME);
       isValidInput = false;
     }

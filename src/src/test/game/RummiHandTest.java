@@ -1,8 +1,9 @@
 package game;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 
 public class RummiHandTest {
@@ -45,10 +46,10 @@ public class RummiHandTest {
     RummiHand rummiHand2 = new RummiHand();
     rummiHand2.setStone(new Coordinate(1,1), new Stone(Stone.Color.JOKER, 1));
     rummiHand2.setStone(new Coordinate(2,1), new Stone(Stone.Color.JOKER, 2));
-    assertEquals(rummiHand2.points(), 20);
+    assertEquals(40, rummiHand2.points());
 
     rummiHand2.setStone(new Coordinate(3,1), new Stone(Stone.Color.BLUE, 2));
-    assertEquals(rummiHand2.points(), 22);
+    assertEquals(42, rummiHand2.points());
 
   }
 
