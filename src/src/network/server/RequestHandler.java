@@ -219,7 +219,7 @@ class RequestHandler {
 
         default:
       }
-    } catch (UnsupportedOperationException e) {
+    } catch (IllegalArgumentException | IllegalStateException e) {
       sendErrorToPlayer(playerID, e.getMessage());
     }
   }
