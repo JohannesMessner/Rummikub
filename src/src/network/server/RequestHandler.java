@@ -31,7 +31,6 @@ import java.util.Map;
  */
 class RequestHandler {
 
-  private static final String NOT_YOUR_TURN = "not your turn!";
   private static final String NOT_ALLOWED_MOVE = "not allowed to move stones like that!";
 
   private Game game;
@@ -84,6 +83,7 @@ class RequestHandler {
         case JOIN:
           ConcreteSetPlayer setPlayer = (ConcreteSetPlayer) request;
           game.join(playerID, setPlayer.getName(), setPlayer.getAge());
+        case UPDATE_PLAYERS:
           server.sendToAll(new PlayerNamesInfo(game.getPlayerNames()));
           break;
 

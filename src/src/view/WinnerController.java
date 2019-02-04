@@ -3,7 +3,6 @@ package view;
 import java.io.IOException;
 import java.util.Map;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 
 /**
@@ -15,7 +14,6 @@ public class WinnerController {
   @FXML
   private Text rankList;
   @FXML
-  private Button quitButton;
   private MainController mainController;
 
   /**
@@ -29,7 +27,7 @@ public class WinnerController {
 
   @FXML
   private void restartGame() throws IOException {
-    mainController.switchToWaitScene();
+    mainController.restartGame();
   }
 
   @FXML

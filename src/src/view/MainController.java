@@ -525,4 +525,9 @@ public class MainController implements Controller {
   void sendUndoRequest() {
     requestBuilder.sendUndoRequest();
   }
+
+  void restartGame() throws IOException {
+    requestBuilder.sendUpdateRequest();
+    switchToWaitScene();
+  }
 }

@@ -155,4 +155,8 @@ public class RequestBuilder {
   public void sendUndoRequest() {
     client.sendRequest(new SimpleRequest(RequestID.UNDO));
   }
+
+  public void sendUpdateRequest() {
+    client.sendRequest(new SimpleRequest(RequestID.UPDATE_PLAYERS));
+  }
 }

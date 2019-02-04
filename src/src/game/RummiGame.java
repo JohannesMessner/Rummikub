@@ -450,19 +450,19 @@ public class RummiGame implements Game {
     if (playerID != currentPlayerID) {
       throw new IllegalArgumentException(ErrorMessages.NOT_YOUR_TURN_ERROR);
     }
-    if (!table.isConsistent()) {
-      throw new IllegalStateException(ErrorMessages.TABLE_NOT_CONSISTENT_ERROR);
-    }
-    int pointsPlayed = table.getPoints() - tablePoints;
-    if (pointsPlayed == 0) {
-      throw new IllegalStateException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
-    }
-    // check if the the player has'nt played their first move yet and playedPoints was not enough
-    if (!currentPlayer().hasPlayedFirstMove() && pointsPlayed < Constants.MIN_FIRST_MOVE_POINTS) {
-      throw new IllegalStateException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
-    }
+//    if (!table.isConsistent()) {
+//      throw new IllegalStateException(ErrorMessages.TABLE_NOT_CONSISTENT_ERROR);
+//    }
+//    int pointsPlayed = table.getPoints() - tablePoints;
+//    if (pointsPlayed == 0) {
+//      throw new IllegalStateException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
+//    }
+//    // check if the the player has'nt played their first move yet and playedPoints was not enough
+//    if (!currentPlayer().hasPlayedFirstMove() && pointsPlayed < Constants.MIN_FIRST_MOVE_POINTS) {
+//      throw new IllegalStateException(ErrorMessages.NOT_ENOUGH_POINTS_ERROR);
+//    }
 
-    tablePoints += pointsPlayed;
+//    tablePoints += pointsPlayed;
     currentPlayer().playedFirstMove();
     if (hasWinner()) {
       gameOn = false;
